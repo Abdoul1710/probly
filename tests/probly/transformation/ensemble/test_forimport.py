@@ -7,11 +7,7 @@ import pytest
     "probly.transformation.ensemble.torch",
 ])
 def test_modules_import(mod):
-    """
-     Lässt sich das Ensemble-Modul importieren?
-    Falls ein Teilmodul (z. B. .torch) optional/nicht installiert ist,
-    wird der Test sauber 'skipped' statt zu fehlschlagen.
-    """
+    """Lässt sich das Ensemble-Modul importieren?"""
     try:
         importlib.import_module(mod)
     except ModuleNotFoundError as e:
