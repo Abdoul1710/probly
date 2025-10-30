@@ -1,7 +1,7 @@
-probly.evaluation.metrics
-=========================
+﻿probly.metrics
+==============
 
-.. automodule:: probly.evaluation.metrics
+.. automodule:: probly.metrics
 
    
    .. rubric:: Functions

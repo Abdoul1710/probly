@@ -4,10 +4,10 @@
 .. automodule:: probly.plot
 
    
-.. rubric:: Modules
+   .. rubric:: Functions
 
-.. autosummary::
-   :toctree:
-   :recursive:
-
-   credal
+   .. autosummary::
+   
+      credal_set_plot
+      simplex_plot
+   

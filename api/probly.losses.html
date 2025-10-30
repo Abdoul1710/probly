@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="probly.traverse_nn.flax" href="probly.traverse_nn.flax.html" /><link rel="prev" title="probly.traverse_nn" href="probly.traverse_nn.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="probly.plot" href="probly.plot.html" /><link rel="prev" title="probly.metrics" href="probly.metrics.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>probly.traverse_nn.common - probly 0.3.1 documentation</title>
+        <title>probly.losses - probly 0.3.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -181,7 +181,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -222,32 +222,9 @@
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="probly.datasets.html">probly.datasets</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of probly.datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="probly.datasets.torch.html">probly.datasets.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="probly.evaluation.html">probly.evaluation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of probly.evaluation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="probly.evaluation.metrics.html">probly.evaluation.metrics</a></li>
-<li class="toctree-l3"><a class="reference internal" href="probly.evaluation.tasks.html">probly.evaluation.tasks</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="probly.layers.html">probly.layers</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of probly.layers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="probly.layers.torch.html">probly.layers.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="probly.plot.html">probly.plot</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of probly.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="probly.plot.credal.html">probly.plot.credal</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="probly.predictor.html">probly.predictor</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="probly.quantification.html">probly.quantification</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of probly.quantification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="probly.quantification.classification.html">probly.quantification.classification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="probly.quantification.regression.html">probly.quantification.regression</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="probly.representation.html">probly.representation</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of probly.representation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="probly.representation.html">probly.representation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of probly.representation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="probly.representation.representer.html">probly.representation.representer</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="probly.representation.sampling.html">probly.representation.sampling</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of probly.representation.sampling</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="probly.representation.sampling.html">probly.representation.sampling</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of probly.representation.sampling</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="probly.representation.sampling.flax_sampler.html">probly.representation.sampling.flax_sampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="probly.representation.sampling.jax_sample.html">probly.representation.sampling.jax_sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="probly.representation.sampling.sample.html">probly.representation.sampling.sample</a></li>
@@ -258,38 +235,16 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="probly.train.html">probly.train</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of probly.train</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="probly.train.bayesian.html">probly.train.bayesian</a></li>
-<li class="toctree-l3"><a class="reference internal" href="probly.train.losses.html">probly.train.losses</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="probly.quantification.html">probly.quantification</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of probly.quantification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="probly.quantification.classification.html">probly.quantification.classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="probly.quantification.regression.html">probly.quantification.regression</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="probly.transformation.html">probly.transformation</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of probly.transformation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="probly.transformation.bayesian.html">probly.transformation.bayesian</a></li>
-<li class="toctree-l3"><a class="reference internal" href="probly.transformation.dropconnect.html">probly.transformation.dropconnect</a></li>
-<li class="toctree-l3"><a class="reference internal" href="probly.transformation.dropout.html">probly.transformation.dropout</a></li>
-<li class="toctree-l3"><a class="reference internal" href="probly.transformation.ensemble.html">probly.transformation.ensemble</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="probly.transformation.evidential.html">probly.transformation.evidential</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of probly.transformation.evidential</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="probly.transformation.evidential.classification.html">probly.transformation.evidential.classification</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of probly.transformation.evidential.classification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="probly.transformation.evidential.classification.common.html">probly.transformation.evidential.classification.common</a></li>
-<li class="toctree-l5"><a class="reference internal" href="probly.transformation.evidential.classification.torch.html">probly.transformation.evidential.classification.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="probly.transformation.evidential.regression.html">probly.transformation.evidential.regression</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of probly.transformation.evidential.regression</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="probly.transformation.evidential.regression.common.html">probly.transformation.evidential.regression.common</a></li>
-<li class="toctree-l5"><a class="reference internal" href="probly.transformation.evidential.regression.torch.html">probly.transformation.evidential.regression.torch</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="probly.traverse_nn.html">probly.traverse_nn</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of probly.traverse_nn</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">probly.traverse_nn.common</a></li>
-<li class="toctree-l3"><a class="reference internal" href="probly.traverse_nn.flax.html">probly.traverse_nn.flax</a></li>
-<li class="toctree-l3"><a class="reference internal" href="probly.traverse_nn.torch.html">probly.traverse_nn.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="probly.utils.html">probly.utils</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of probly.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="probly.metrics.html">probly.metrics</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">probly.losses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probly.plot.html">probly.plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probly.tasks.html">probly.tasks</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="probly.utils.html">probly.utils</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of probly.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="probly.utils.errors.html">probly.utils.errors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="probly.utils.probabilities.html">probly.utils.probabilities</a></li>
 <li class="toctree-l3"><a class="reference internal" href="probly.utils.sets.html">probly.utils.sets</a></li>
@@ -335,50 +290,52 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-probly.traverse_nn.common">
-<span id="probly-traverse-nn-common"></span><h1>probly.traverse_nn.common<a class="headerlink" href="#module-probly.traverse_nn.common" title="Link to this heading">¶</a></h1>
-<p>Generic traverser helpers for neural networks.</p>
-<p class="rubric">Functions</p>
+          <section id="module-probly.losses">
+<span id="probly-losses"></span><h1>probly.losses<a class="headerlink" href="#module-probly.losses" title="Link to this heading">¶</a></h1>
+<p>Collection of loss implementations.</p>
+<p class="rubric">Classes</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#probly.traverse_nn.common.compose" title="probly.traverse_nn.common.compose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compose</span></code></a>(traverser[, nn_traverser, name])</p></td>
-<td><p>Compose a custom traverser with neural network traversal functionality.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ELBOLoss</span></code>([kl_penalty])</p></td>
+<td><p>Evidence lower bound loss based on <span id="id1">[<a class="reference internal" href="../references.html#id2" title="Charles Blundell, Julien Cornebise, Koray Kavukcuoglu, and Daan Wierstra. Weight uncertainty in neural network. In Francis R. Bach and David M. Blei, editors, Proceedings of the 32nd International Conference on Machine Learning, ICML 2015, Lille, France, 6-11 July 2015, volume 37 of JMLR Workshop and Conference Proceedings, 1613–1622. JMLR.org, 2015. URL: http://proceedings.mlr.press/v37/blundell15.html.">BCKW15</a>]</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">EvidentialCELoss</span></code>()</p></td>
+<td><p>Evidential Cross Entropy Loss based on <span id="id2">[<a class="reference internal" href="../references.html#id5" title="Murat Sensoy, Lance M. Kaplan, and Melih Kandemir. Evidential deep learning to quantify classification uncertainty. In Samy Bengio, Hanna M. Wallach, Hugo Larochelle, Kristen Grauman, Nicolò Cesa-Bianchi, and Roman Garnett, editors, Advances in Neural Information Processing Systems 31: Annual Conference on Neural Information Processing Systems 2018, NeurIPS 2018, December 3-8, 2018, Montréal, Canada, 3183–3193. 2018. URL: https://proceedings.neurips.cc/paper/2018/hash/a981f2b708044d6fb4a71a1463242520-Abstract.html.">SKK18</a>]</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">EvidentialKLDivergence</span></code>()</p></td>
+<td><p>Evidential KL Divergence Loss based on <span id="id3">[<a class="reference internal" href="../references.html#id5" title="Murat Sensoy, Lance M. Kaplan, and Melih Kandemir. Evidential deep learning to quantify classification uncertainty. In Samy Bengio, Hanna M. Wallach, Hugo Larochelle, Kristen Grauman, Nicolò Cesa-Bianchi, and Roman Garnett, editors, Advances in Neural Information Processing Systems 31: Annual Conference on Neural Information Processing Systems 2018, NeurIPS 2018, December 3-8, 2018, Montréal, Canada, 3183–3193. 2018. URL: https://proceedings.neurips.cc/paper/2018/hash/a981f2b708044d6fb4a71a1463242520-Abstract.html.">SKK18</a>]</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">EvidentialLogLoss</span></code>()</p></td>
+<td><p>Evidential Log Loss based on <span id="id4">[<a class="reference internal" href="../references.html#id5" title="Murat Sensoy, Lance M. Kaplan, and Melih Kandemir. Evidential deep learning to quantify classification uncertainty. In Samy Bengio, Hanna M. Wallach, Hugo Larochelle, Kristen Grauman, Nicolò Cesa-Bianchi, and Roman Garnett, editors, Advances in Neural Information Processing Systems 31: Annual Conference on Neural Information Processing Systems 2018, NeurIPS 2018, December 3-8, 2018, Montréal, Canada, 3183–3193. 2018. URL: https://proceedings.neurips.cc/paper/2018/hash/a981f2b708044d6fb4a71a1463242520-Abstract.html.">SKK18</a>]</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">EvidentialMSELoss</span></code>()</p></td>
+<td><p>Evidential Mean Square Error Loss based on <span id="id5">[<a class="reference internal" href="../references.html#id5" title="Murat Sensoy, Lance M. Kaplan, and Melih Kandemir. Evidential deep learning to quantify classification uncertainty. In Samy Bengio, Hanna M. Wallach, Hugo Larochelle, Kristen Grauman, Nicolò Cesa-Bianchi, and Roman Garnett, editors, Advances in Neural Information Processing Systems 31: Annual Conference on Neural Information Processing Systems 2018, NeurIPS 2018, December 3-8, 2018, Montréal, Canada, 3183–3193. 2018. URL: https://proceedings.neurips.cc/paper/2018/hash/a981f2b708044d6fb4a71a1463242520-Abstract.html.">SKK18</a>]</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">EvidentialNIGNLLLoss</span></code>()</p></td>
+<td><p>Evidential normal inverse gamma negative log likelihood loss.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">EvidentialRegressionRegularization</span></code>()</p></td>
+<td><p>Implementation of the evidential regression regularization <span id="id6">[<a class="reference internal" href="../references.html#id6" title="Alexander Amini, Wilko Schwarting, Ava Soleimany, and Daniela Rus. Deep evidential regression. In Hugo Larochelle, Marc'Aurelio Ranzato, Raia Hadsell, Maria-Florina Balcan, and Hsuan-Tien Lin, editors, Advances in Neural Information Processing Systems 33: Annual Conference on Neural Information Processing Systems 2020, NeurIPS 2020, December 6-12, 2020, virtual. 2020. URL: https://proceedings.neurips.cc/paper/2020/hash/aab085461de182608ee9f607f3f7d18f-Abstract.html.">ASSR20</a>]</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExpectedCalibrationError</span></code>([num_bins])</p></td>
+<td><p>Expected Calibration Error (ECE) <span id="id7">[<a class="reference internal" href="../references.html#id14" title="Chuan Guo, Geoff Pleiss, Yu Sun, and Kilian Q. Weinberger. On calibration of modern neural networks. In Doina Precup and Yee Whye Teh, editors, Proceedings of the 34th International Conference on Machine Learning, ICML 2017, Sydney, NSW, Australia, 6-11 August 2017, volume 70 of Proceedings of Machine Learning Research, 1321–1330. PMLR, 2017. URL: http://proceedings.mlr.press/v70/guo17a.html.">GPSW17</a>]</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">FocalLoss</span></code>([alpha, gamma])</p></td>
+<td><p>Focal Loss based on <span id="id8">[<a class="reference internal" href="../references.html#id13" title="Tsung-Yi Lin, Priya Goyal, Ross B. Girshick, Kaiming He, and Piotr Dollár. Focal loss for dense object detection. In IEEE International Conference on Computer Vision, ICCV 2017, Venice, Italy, October 22-29, 2017, 2999–3007. IEEE Computer Society, 2017. URL: https://doi.org/10.1109/ICCV.2017.324, doi:10.1109/ICCV.2017.324.">LGG+17</a>]</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LabelRelaxationLoss</span></code>([alpha])</p></td>
+<td><p>Label Relaxation Loss from <span id="id9">[<a class="reference internal" href="../references.html#id10" title="Julian Lienen and Eyke Hüllermeier. From label smoothing to label relaxation. In Thirty-Fifth AAAI Conference on Artificial Intelligence, AAAI 2021, Thirty-Third Conference on Innovative Applications of Artificial Intelligence, IAAI 2021, The Eleventh Symposium on Educational Advances in Artificial Intelligence, EAAI 2021, Virtual Event, February 2-9, 2021, 8583–8591. AAAI Press, 2021. URL: https://doi.org/10.1609/aaai.v35i10.17041, doi:10.1609/AAAI.V35I10.17041.">LHullermeier21</a>]</span>.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<dl class="py function">
-<dt class="sig sig-object py" id="probly.traverse_nn.common.compose">
-<span class="sig-prename descclassname"><span class="pre">probly.traverse_nn.common.</span></span><span class="sig-name descname"><span class="pre">compose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traverser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nn_traverser=&lt;pytraverse.composition.LazydispatchTraverser</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/probly/traverse_nn/common.html#compose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#probly.traverse_nn.common.compose" title="Link to this definition">¶</a></dt>
-<dd><p>Compose a custom traverser with neural network traversal functionality.</p>
-<p>This function creates a sequential traverser that combines neural network traversal,
-a custom traverser, and layer counting capabilities in a specific order.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeAliasType</span></code></span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>traverser</strong> (<em>Traverser</em>) – A custom traverser function to be composed with the NN traverser.</p></li>
-<li><p><strong>nn_traverser</strong> (<em>Traverser</em>) – The neural network traverser to use. Defaults to the module’s
-nn_traverser.</p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>) – Optional name for the composed traverser.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A composed sequential traverser that applies NN traversal, custom traversal,
-and layer counting in sequence.</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 
         </article>
@@ -386,23 +343,23 @@ and layer counting in sequence.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="probly.traverse_nn.flax.html">
+          <a class="next-page" href="probly.plot.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">probly.traverse_nn.flax</div>
+                <div class="title">probly.plot</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="probly.traverse_nn.html">
+          <a class="prev-page" href="probly.metrics.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">probly.traverse_nn</div>
+                <div class="title">probly.metrics</div>
                 
               </div>
             </a>
@@ -424,27 +381,8 @@ and layer counting in sequence.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">probly.traverse_nn.common</a><ul>
-<li><a class="reference internal" href="#probly.traverse_nn.common.compose"><code class="docutils literal notranslate"><span class="pre">compose()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

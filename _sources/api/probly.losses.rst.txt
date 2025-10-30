@@ -1,7 +1,7 @@
-probly.train.losses
-===================
+﻿probly.losses
+=============
 
-.. automodule:: probly.train.losses
+.. automodule:: probly.losses
 
    
    .. rubric:: Classes
