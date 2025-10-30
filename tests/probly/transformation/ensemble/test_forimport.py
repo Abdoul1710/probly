@@ -7,7 +7,7 @@ import pytest
     "probly.transformation.ensemble.torch",
 ])
 def test_modules_import(mod):
-    """Lässt sich das Ensemble-Modul importieren?"""
+    """Check if the ensemble module can be imported"""
     try:
         importlib.import_module(mod)
     except ModuleNotFoundError as e:
