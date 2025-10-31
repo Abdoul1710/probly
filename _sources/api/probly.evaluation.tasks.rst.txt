@@ -1,7 +1,7 @@
-﻿probly.tasks
-============
+probly.evaluation.tasks
+=======================
 
-.. automodule:: probly.tasks
+.. automodule:: probly.evaluation.tasks
 
    
    .. rubric:: Functions
