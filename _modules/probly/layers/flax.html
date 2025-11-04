@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>probly.traverse_nn.common - probly 0.3.1 documentation</title>
+        <title>probly.layers.flax - probly 0.3.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -346,59 +346,105 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for probly.traverse_nn.common</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Generic traverser helpers for neural networks.&quot;&quot;&quot;</span>
+          <h1>Source code for probly.layers.flax</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;flax layer implementation.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">pytraverse</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 
-<span class="n">LAYER_COUNT</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">GlobalVariable</span><span class="p">[</span><span class="nb">int</span><span class="p">](</span>
-    <span class="s2">&quot;LAYER_COUNT&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;The DFS index of the current layer/module.&quot;</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">FLATTEN_SEQUENTIAL</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">StackVariable</span><span class="p">[</span><span class="nb">bool</span><span class="p">](</span>
-    <span class="s2">&quot;FLATTEN_SEQUENTIAL&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Whether to flatten sequential modules after making changes.&quot;</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flax</span><span class="w"> </span><span class="kn">import</span> <span class="n">linen</span> <span class="k">as</span> <span class="n">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jax</span><span class="w"> </span><span class="kn">import</span> <span class="n">Array</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 
-<span class="nd">@t</span><span class="o">.</span><span class="n">computed</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">is_first_layer</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the current layer is the first layer.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">state</span><span class="p">[</span><span class="n">LAYER_COUNT</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">jax.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">KeyArray</span>
+
+<span class="n">PRNG_NAME</span> <span class="o">=</span> <span class="s2">&quot;dropconnect&quot;</span>
 
 
-<span class="n">layer_count_traverser</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">singledispatch_traverser</span><span class="p">[</span><span class="nb">object</span><span class="p">](</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;layer_count_traverser&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_dropconnect</span><span class="p">(</span>
+    <span class="n">w</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">KeyArray</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">rescale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply DropConnect regularization to weights.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">w</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 
-<span class="n">nn_traverser</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">lazydispatch_traverser</span><span class="p">[</span><span class="nb">object</span><span class="p">](</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;nn_traverser&quot;</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">keep</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">w</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">mask</span>
+    <span class="k">return</span> <span class="n">out</span> <span class="o">/</span> <span class="n">keep</span> <span class="k">if</span> <span class="n">rescale</span> <span class="k">else</span> <span class="n">out</span>
 
 
-<div class="viewcode-block" id="compose">
-<a class="viewcode-back" href="../../../api/probly.traverse_nn.common.html#probly.traverse_nn.common.compose">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">compose</span><span class="p">(</span>
-    <span class="n">traverser</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Traverser</span><span class="p">,</span>
-    <span class="n">nn_traverser</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Traverser</span> <span class="o">=</span> <span class="n">nn_traverser</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Traverser</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compose a custom traverser with neural network traversal functionality.</span>
+<div class="viewcode-block" id="DropConnectDense">
+<a class="viewcode-back" href="../../../api/probly.layers.flax.html#probly.layers.flax.DropConnectDense">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DropConnectDense</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dense layer with DropConnect regularization.&quot;&quot;&quot;</span>
 
-<span class="sd">    This function creates a sequential traverser that combines neural network traversal,</span>
-<span class="sd">    a custom traverser, and layer counting capabilities in a specific order.</span>
+    <span class="n">features</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float32</span>
+    <span class="n">param_dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float32</span>
+    <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">default_kernel_init</span>
+    <span class="n">bias_init</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">zeros</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span>
+    <span class="n">rescale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        traverser: A custom traverser function to be composed with the NN traverser.</span>
-<span class="sd">        nn_traverser: The neural network traverser to use. Defaults to the module&#39;s</span>
-<span class="sd">            nn_traverser.</span>
-<span class="sd">        name: Optional name for the composed traverser.</span>
+<div class="viewcode-block" id="DropConnectDense.from_dense">
+<a class="viewcode-back" href="../../../api/probly.layers.flax.html#probly.layers.flax.DropConnectDense.from_dense">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dense</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">d</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">,</span>
+        <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
+        <span class="n">rescale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DropConnectDense</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a DropConnectDense from a regular nn.Dense.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">features</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">features</span><span class="p">,</span>
+            <span class="n">use_bias</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">use_bias</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="n">param_dtype</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">param_dtype</span><span class="p">,</span>
+            <span class="n">precision</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">precision</span><span class="p">,</span>
+            <span class="n">kernel_init</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
+            <span class="n">bias_init</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bias_init</span><span class="p">,</span>
+            <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+            <span class="n">rescale</span><span class="o">=</span><span class="n">rescale</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        A composed sequential traverser that applies NN traversal, custom traversal,</span>
-<span class="sd">        and layer counting in sequence.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">sequential</span><span class="p">(</span><span class="n">nn_traverser</span><span class="p">,</span> <span class="n">traverser</span><span class="p">,</span> <span class="n">layer_count_traverser</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DropConnectDense.__call__">
+<a class="viewcode-back" href="../../../api/probly.layers.flax.html#probly.layers.flax.DropConnectDense.__call__">[docs]</a>
+    <span class="nd">@nn</span><span class="o">.</span><span class="n">compact</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">train</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the layer to the input x.&quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s2">&quot;kernel&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_init</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,),</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_dtype</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="k">if</span> <span class="n">train</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_rng</span><span class="p">(</span><span class="n">PRNG_NAME</span><span class="p">)</span>
+            <span class="n">subkey</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">fold_in</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">_apply_dropconnect</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">subkey</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span> <span class="ow">and</span> <span class="n">b</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">b</span>
+        <span class="k">return</span> <span class="n">y</span></div>
+</div>
 
 </pre></div>
         </article>
