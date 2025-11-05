@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 # Importiere dein Modul
@@ -6,7 +8,6 @@ from probly.transformation.evidential.classification.common import (
     evidential_classification,
     register,
 )
-
 
 
 # === Test 1: Kein Appender registriert -> Fehler ===
@@ -25,7 +26,7 @@ def test_evidential_classification_raises_not_implemented_error():
 # === Test 2: Ein registrierter Appender wird korrekt aufgerufen ===
 def test_registered_appender_is_called():
     class DummyPredictor:
-        def __init__(self, name):
+        def __init__(self, name) -> None:
             self.name = name
 
     def dummy_appender(base):
@@ -44,11 +45,11 @@ def test_registered_appender_is_called():
 # === Test 3: Mehrere Typen können unabhängig registriert werden ===
 def test_multiple_types_are_handled_independently():
     class ModelA:
-        def __init__(self, id):
+        def __init__(self, id) -> None:
             self.id = id
 
     class ModelB:
-        def __init__(self, id):
+        def __init__(self, id) -> None:
             self.id = id
 
     def appender_a(base):

@@ -1,6 +1,6 @@
 """Tests for the Torch evidential classification integration."""
+from __future__ import annotations
 
-import pytest
 from torch import nn
 
 from probly.transformation.evidential.classification import torch as torch_impl
