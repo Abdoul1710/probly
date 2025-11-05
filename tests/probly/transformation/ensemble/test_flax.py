@@ -10,15 +10,16 @@ from probly.transformation.ensemble.flax import generate_flax_ensemble
 
 class TestModel(nnx.Module):
     """Simple test model with one Linear layer."""
+
     # Initializes a single Linear layer
-    def __init__(self, rngs):  # noqa: ANN204, D107
+    def __init__(self, rngs: nnx.Rngs):  # noqa: ANN204, D107
         self.linear = nnx.Linear(4, 2, rngs=rngs)
 
-    def __call__(self, x):  # noqa: ANN204
+    def __call__(self, x: jnp.ndarray) -> jnp.ndarray:
         return self.linear(x)
 
 
-def _w_b(model: TestModel):
+def _w_b(model: TestModel) -> tuple[jnp.ndarray, jnp.ndarray]:
     """Helper: returns weight & bias arrays for stable comparisons."""
     params = nnx.state(model)["linear"]
     w = jnp.array(params["kernel"])
