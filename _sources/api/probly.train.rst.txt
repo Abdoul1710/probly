@@ -11,5 +11,4 @@
    :recursive:
 
    bayesian
-   calibration
-   evidential
+   losses

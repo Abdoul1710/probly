@@ -4,10 +4,9 @@ probly.train.bayesian
 .. automodule:: probly.train.bayesian
 
    
-.. rubric:: Modules
+   .. rubric:: Functions
 
-.. autosummary::
-   :toctree:
-   :recursive:
-
-   torch
+   .. autosummary::
+   
+      collect_kl_divergence
+   
