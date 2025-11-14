@@ -8,5 +8,6 @@ probly.layers.flax
 
    .. autosummary::
    
+      Dense
       DropConnectDense
    
