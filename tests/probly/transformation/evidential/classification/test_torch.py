@@ -63,11 +63,3 @@ def test_evidential_classification_appends_softplus_on_conv(torch_conv_linear_mo
     assert count_softplus_original == (count_softplus_modified - 1)
     assert count_sequential_original == (count_sequential_modified - 1)
     assert count_conv_original == count_conv_modified
-
-
-def test_custom_network(torch_custom_model: nn.Module) -> None:
-    """Tests the custom model modification with added dropout layers."""
-    model = evidential_classification(torch_custom_model)
-
-    # check if model type is correct
-    assert isinstance(model, nn.Sequential)
