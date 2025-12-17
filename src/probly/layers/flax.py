@@ -1,246 +1,127 @@
-"""NNX Dense + DropConnectDense layer implementations."""
+"""flax layer implementation."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
-
-import pytest
-
-flax = pytest.importorskip("flax")
-from flax import nnx  # noqa: E402
-
-jax = pytest.importorskip("jax")
-from jax import Array  # noqa: E402
-import jax.numpy as jnp  # noqa: E402
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
+from flax import nnx
+from flax.nnx import rnglib
+from flax.nnx.module import first_from
+import jax
+from jax import lax, random
+import jax.numpy as jnp
 
 
-def _apply_dropconnect(
-    w: Array,
-    key: Array,
-    p: float,
-    rescale: bool = True,
-) -> Array:
-    """Apply DropConnect mask to weights."""
-    if p <= 0.0:
-        return w
-    if p >= 1.0:
-        return jnp.zeros_like(w)
+class DropConnectLinear(nnx.Module):
+    """Custom Linear layer with DropConnect applied to weights during training.
 
-    keep = 1.0 - p
-    mask = jax.random.bernoulli(key, keep, shape=w.shape)
-    out = w * mask
-    return out / keep if rescale else out
+    Attributes:
+        weight: nnx.Param, weight matrix of shape.
+        bias: nnx.Param, bias vector of shape.
+        rate: float, the dropconnect probability.
+        deterministic: bool, if false the inputs are masked, whereas if true, no mask
+            is applied and the inputs are returned as is.
+        rng_collection: str, the rng collection name to use when requesting a rng key.
+        rngs: nnx.Rngs or nnx.RngStream or None, rng key.
 
-
-class Dense(nnx.Module):
-    """Minimal Dense layer implemented using flax.nnx."""
+    """
 
     def __init__(
         self,
-        features: int,
-        use_bias: bool = True,
-        dtype: Any = jnp.float32,  # noqa: ANN401
-        param_dtype: Any = jnp.float32,  # noqa: ANN401
-        precision: Any | None = None,  # noqa: ANN401
-        kernel_init: Callable[..., Array] = nnx.initializers.lecun_normal(),  # noqa: B008
-        bias_init: Callable[..., Array] = nnx.initializers.zeros,
+        base_layer: nnx.Linear,
+        rate: float = 0.25,
         *,
-        rngs: nnx.Rngs,
+        rng_collection: str = "dropconnect",
+        rngs: rnglib.Rngs | rnglib.RngStream | None = None,
     ) -> None:
-        """Initialize an NNX Dense layer.
+        """Initialize a DropConnectLinear layer based on a given linear base layer.
 
-        Parameters
-        ----------
-        features:
-            Output dimension.
-        use_bias:
-            Whether a learnable bias term is added.
-        dtype:
-            Computation dtype.
-        param_dtype:
-            Parameter dtype.
-        precision:
-            Optional JAX precision for dot products.
-        kernel_init:
-            Initializer for the kernel parameter.
-        bias_init:
-            Initializer for the bias parameter.
-        rngs:
-            NNX RNG container used to initialize parameters.
+        Args:
+            base_layer: nnx.Linear, The original linear layer to be wrapped.
+            rate: float, the dropconnect probability.
+            rng_collection: str, rng collection name to use when requesting a rng key.
+            rngs: nnx.Rngs or nn.RngStream or None, rng key.
         """
-        self.features = features
-        self.use_bias = use_bias
-        self.dtype = dtype
-        self.param_dtype = param_dtype
-        self.precision = precision
-        self.kernel_init = kernel_init
-        self.bias_init = bias_init
-        self.rngs = rngs
+        self.weight = base_layer.kernel
+        self.bias = base_layer.bias if base_layer.bias is not None else None
+        self.rate = rate
+        self.rng_collection = rng_collection
 
-        self.kernel = nnx.Param(
-            kernel_init(rngs(), (1, features), param_dtype),
-        )
-
-        if use_bias:
-            self.bias = nnx.Param(
-                bias_init(rngs(), (features,), param_dtype),
-            )
+        if isinstance(rngs, rnglib.Rngs):
+            self.rngs = rngs[self.rng_collection].fork()
+        elif isinstance(rngs, rnglib.RngStream):
+            self.rngs = rngs.fork()
+        elif rngs is None:
+            self.rngs = nnx.data(None)
         else:
-            self.bias = None
+            msg = f"rngs must be a RNGS, RngStream or None, but got {type(rngs)}."
+            raise TypeError(msg)
 
-    def __call__(self, x: Array) -> Array:
-        """Apply the linear transformation.
-
-        Parameters
-        ----------
-        x : Array
-            Input of shape [..., in_features].
-
-        Returns:
-        -------
-        Array
-            Output of shape [..., features].
-        """
-        x = jnp.asarray(x, self.dtype)
-        y = jnp.dot(x, self.kernel.value)
-
-        if self.use_bias and self.bias is not None:
-            y = y + self.bias.value
-
-        return y
-
-
-class DropConnectDense(nnx.Module):
-    """Dense layer with DropConnect regularization (NNX version)."""
-
-    def __init__(
+    def __call__(
         self,
-        features: int,
-        use_bias: bool = True,
-        dtype: Any = jnp.float32,  # noqa: ANN401
-        param_dtype: Any = jnp.float32,  # noqa: ANN401
-        precision: Any | None = None,  # noqa: ANN401
-        kernel_init: Callable[..., Array] = nnx.initializers.lecun_normal(),  # noqa: B008
-        bias_init: Callable[..., Array] = nnx.initializers.zeros,
-        p: float = 0.25,
-        rescale: bool = True,
+        inputs: jax.Array,
         *,
-        rngs: nnx.Rngs,
-    ) -> None:
-        """Initialize a DropConnect dense layer for flax.nnx.
+        deterministic: bool = False,
+        rngs: rnglib.Rngs | rnglib.RngStream | jax.Array | None = None,
+    ) -> jax.Array:
+        """Forward pass of the DropConnectLinear layer.
 
-        Parameters
-        ----------
-        features:
-            Output dimension.
-        use_bias:
-            Whether to include a learnable bias.
-        dtype:
-            Computation dtype.
-        param_dtype:
-            Parameter dtype.
-        precision:
-            Optional JAX precision for dot products.
-        kernel_init:
-            Initializer for the kernel.
-        bias_init:
-            Initializer for the bias.
-        p:
-            DropConnect probability.
-        rescale:
-            Whether to rescale surviving weights by 1/(1-p).
-        rngs:
-            RNG container for both params + DropConnect calls.
+        Args:
+           inputs: jax.Array, input data that should be randomly masked.
+           deterministic: bool, if false the inputs are masked, whereas if true, no mask
+            is applied and the inputs are returned as is.
+           rngs: nnx.Rngs, nnx.RngStream or jax.Array, optional key used to generate the dropconnect mask.
+
+        Returns:
+            jax.Array, layer output.
         """
-        self.features = features
-        self.use_bias = use_bias
-        self.dtype = dtype
-        self.param_dtype = param_dtype
-        self.precision = precision
-        self.kernel_init = kernel_init
-        self.bias_init = bias_init
-        self.p = p
-        self.rescale = rescale
-        self.rngs = rngs
+        self.deterministic = deterministic
 
-        self.kernel = nnx.Param(
-            kernel_init(rngs(), (1, features), param_dtype),
+        deterministic = first_from(
+            deterministic,
+            self.deterministic,
+            error_msg="""No `deterministic` argument was provided to DropConnect
+                as either a __call__ argument or class attribute.""",
         )
-        if use_bias:
-            self.bias = nnx.Param(
-                bias_init(rngs(), (features,), param_dtype),
-            )
+
+        if (self.rate == 0.0) or deterministic:
+            return inputs
+
+        # Prevent gradient NaNs in 1.0 edge-case.
+        if self.rate == 1.0:
+            out = inputs @ jnp.zeros_like(self.weight.value)
+            return out if self.bias is None else out + self.bias
+
+        rngs = first_from(
+            rngs,
+            self.rngs,
+            error_msg="""`deterministic` is False, but no `rngs` argument was provided
+                to DropConnect as either a __call__ argument or class atribute.""",
+        )
+
+        if isinstance(rngs, rnglib.Rngs):
+            key = rngs[self.rng_collection]()
+        elif isinstance(rngs, rnglib.RngStream):
+            key = rngs()
+        elif isinstance(rngs, jax.Array):
+            key = rngs
         else:
-            self.bias = None
+            msg = f"rngs must be Rngs, RngStream or jax.Array, but got {type(rngs)}."
+            raise TypeError(msg)
 
-    @classmethod
-    def from_dense(
-        cls,
-        d: Dense,
-        p: float = 0.25,
-        rescale: bool = True,
-        *,
-        rngs: nnx.Rngs,
-    ) -> DropConnectDense:
-        """Recreate DropConnectDense from an NNX Dense instance.
+        keep_prob = 1.0 - self.rate
+        mask = random.bernoulli(key, p=keep_prob, shape=self.weight.value.shape)
+        masked_weight = lax.select(mask, self.weight.value / keep_prob, jnp.zeros_like(self.weight.value))
 
-        Parameters
-        ----------
-        d:
-            Base Dense layer to copy configuration from.
-        p:
-            DropConnect probability.
-        rescale:
-            Whether to rescale surviving weights by 1/(1-p).
-        rngs:
-            RNG container for new parameters.
+        out = inputs @ masked_weight
+        if self.bias is not None:
+            out = out + self.bias.value
+        return out
 
-        Returns:
-        -------
-        DropConnectDense
-        """
-        return cls(
-            features=d.features,
-            use_bias=d.use_bias,
-            dtype=d.dtype,
-            param_dtype=d.param_dtype,
-            precision=d.precision,
-            kernel_init=d.kernel_init,
-            bias_init=d.bias_init,
-            p=p,
-            rescale=rescale,
-            rngs=rngs,
-        )
+    def __repr__(self) -> str:
+        """Return a string representation of the layer including its class name and key attributes."""
+        return f"{self.__class__.__name__}({self.extra_repr()})"
 
-    def __call__(self, x: Array, *, train: bool = True) -> Array:
-        """Apply the dense transformation with optional DropConnect.
-
-        Parameters
-        ----------
-        x : Array
-            Input array.
-        train : bool
-            If True, DropConnect mask is applied.
-
-        Returns:
-        -------
-        Array
-            Output after affine transformation ± DropConnect.
-        """
-        x = jnp.asarray(x, self.dtype)
-
-        w = self.kernel.value
-        if train:
-            key = self.rngs()
-            key = jax.random.fold_in(key, 0)
-            w = _apply_dropconnect(w, key, self.p, self.rescale)
-
-        y = jnp.dot(x, w)
-
-        if self.use_bias and self.bias is not None:
-            y = y + self.bias.value
-
-        return y
+    def extra_repr(self) -> str:
+        """Expose description of in- and out-features of this layer."""
+        in_features = self.weight.value.shape[0]
+        out_features = self.weight.value.shape[1]
+        return f"in_features={in_features}, out_features={out_features}, bias={self.bias is not None}"

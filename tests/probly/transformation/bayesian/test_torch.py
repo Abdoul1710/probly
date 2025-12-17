@@ -1,76 +1,97 @@
+"""Test for torch bayesian models."""
+
 from __future__ import annotations
 
-import importlib
-import sys
-from typing import Any
-
 import pytest
-from torch import nn
 
 from probly.layers.torch import BayesConv2d, BayesLinear
-from probly.transformation.bayesian import common, torch as t
+from probly.transformation import bayesian
+from tests.probly.torch_utils import count_layers
+
+torch = pytest.importorskip("torch")
+
+from torch import nn  # noqa: E402
 
 
-def test_if_register_is_called_on_import(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Check if register() is called automatically when torch module is imported."""
-    called: list[tuple[type[Any], Any]] = []
+class TestNetworkArchitectures:
+    """Test class for different network architectures."""
 
-    def fake_register(cls: type[Any], trv: object) -> None:
-        called.append((cls, trv))
+    def test_linear_network_replacement(
+        self,
+        torch_model_small_2d_2d: nn.Sequential,
+    ) -> None:
+        """Tests if a model incorporates a bayesian layer correctly when a linear layer is present.
 
-    # Patch common.register with our fake function
-    monkeypatch.setattr(common, "register", fake_register, raising=True)
+        This function verifies that:
+        - A standard linear layer is replaced with a bayesian linear layer.
+        """
+        model = bayesian(torch_model_small_2d_2d)
 
-    # Reimport module to trigger register() calls
-    modname = "probly.transformation.bayesian.torch"
-    sys.modules.pop(modname, None)
-    importlib.import_module(modname)
+        # count number of nn.Linear layers in original model
+        count_linear_original = count_layers(torch_model_small_2d_2d, nn.Linear)
+        # count number of BayesLinear layers in original model
+        count_bayesian_original = count_layers(torch_model_small_2d_2d, BayesLinear)
+        # count number of nn.Sequential layers in original model
+        count_sequential_original = count_layers(torch_model_small_2d_2d, nn.Sequential)
 
-    # Convert list of tuples to dict for easier lookup
-    called2 = dict(called)
+        # count number of nn.Linear layers in modified model
+        count_linear_modified = count_layers(model, nn.Linear)
+        # count number of BayesLinear layers in modified model
+        count_bayesian_modified = count_layers(model, BayesLinear)
+        # count number of nn.Sequential layers in modified model
+        count_sequential_modified = count_layers(model, nn.Sequential)
 
-    # Both nn.Linear and nn.Conv2d should have been registered
-    assert nn.Linear in called2
-    assert nn.Conv2d in called2
+        # check that the model is not modified except for the bayesian layer
+        assert model is not None
+        assert isinstance(model, type(torch_model_small_2d_2d))
+        assert count_bayesian_modified == count_bayesian_original + count_linear_original
+        assert count_linear_modified == 0
+        assert count_sequential_original == count_sequential_modified
 
+    def test_convolutional_network(self, torch_conv_linear_model: nn.Sequential) -> None:
+        """Tests the convolutional neural network modification with added bayesian layers.
 
-def test_if_replace_torch_bayesian_linear_works(torch_model_small_2d_2d: nn.Sequential) -> None:
-    """Ensure replace_torch_bayesian_linear correctly wraps nn.Linear."""
-    # switch the layers from linear to bayesian within our model and save the bayesian ones in bayesmodel_arr
-    bayesmodel_arr = nn.Sequential()
-    for i in range(len(torch_model_small_2d_2d)):
-        if isinstance(torch_model_small_2d_2d[i], nn.Linear):
-            bayesmodel_arr.append(
-                t.replace_torch_bayesian_linear(
-                    torch_model_small_2d_2d[i],
-                    True,
-                    0.5,
-                    1.3,
-                    0.4,
-                ),
-            )
+        This function evaluates whether the given convolutional neural network model
+        has been correctly modified to include bayesian layers without altering the
+        number of other components such as linear, sequential, or convolutional layers.
+        """
+        model = bayesian(torch_conv_linear_model)
 
-    for module in range(len(torch_model_small_2d_2d)):
-        if isinstance(module, nn.Linear):
-            assert isinstance(bayesmodel_arr[i], BayesLinear)
+        # count number of nn.Linear layers in original model
+        count_linear_original = count_layers(torch_conv_linear_model, nn.Linear)
+        # count number of BayesConv2d layers in original model
+        count_bayesian_conv_original = count_layers(torch_conv_linear_model, BayesConv2d)
+        # count number of nn.Sequential layers in original model
+        count_sequential_original = count_layers(torch_conv_linear_model, nn.Sequential)
+        # count number of nn.Conv2d layers in original model
+        count_conv_original = count_layers(torch_conv_linear_model, nn.Conv2d)
+        # count number of BayesLinear layers in original model
+        count_bayesian_linear_original = count_layers(torch_conv_linear_model, BayesLinear)
 
+        # count number of nn.Linear layers in modified model
+        count_linear_modified = count_layers(model, nn.Linear)
+        # count number of BayesConv2d layers in modified model
+        count_bayesian_conv_modified = count_layers(model, BayesConv2d)
+        # count number of nn.Sequential layers in modified model
+        count_sequential_modified = count_layers(model, nn.Sequential)
+        # count number of nn.Conv2d layers in modified model
+        count_conv_modified = count_layers(model, nn.Conv2d)
+        # count number of BayesLinear layers in modified model
+        count_bayesian_linear_modified = count_layers(model, BayesLinear)
 
-def test_if_replace_torch_bayesian_conv2d_works(torch_conv_linear_model: nn.Sequential) -> None:
-    """Ensure replace_torch_bayesian_conv2d correctly wraps nn.Conv2d."""
-    # switch the layers from conv2d to bayesian within our model and save the bayesian ones in bayesmodel_arr
-    bayesmodel_arr = nn.Sequential()
-    for i in range(len(torch_conv_linear_model)):
-        if isinstance(torch_conv_linear_model[i], nn.Conv2d):
-            bayesmodel_arr.append(
-                t.replace_torch_bayesian_conv2d(
-                    torch_conv_linear_model[i],
-                    True,
-                    0.5,
-                    1.3,
-                    0.4,
-                ),
-            )
+        # check that the model is not modified except for the bayesian layer
+        assert model is not None
+        assert isinstance(model, type(torch_conv_linear_model))
+        assert count_linear_modified == 0
+        assert count_conv_modified == 0
+        assert count_bayesian_conv_modified == count_bayesian_conv_original + count_conv_original
+        assert count_bayesian_linear_modified == count_bayesian_linear_original + count_linear_original
+        assert count_sequential_original == count_sequential_modified
 
-    for module in range(len(torch_conv_linear_model)):
-        if isinstance(module, nn.Conv2d):
-            assert isinstance(bayesmodel_arr[i], BayesConv2d)
+    def test_custom_network(self, torch_custom_model: nn.Module) -> None:
+        """Tests the custom model modification with added bayesian layers."""
+        model = bayesian(torch_custom_model)
+
+        # check if model type is correct
+        assert isinstance(model, type(torch_custom_model))
+        assert not isinstance(model, nn.Sequential)

@@ -15,14 +15,14 @@ def test_evidential_classification_appends_softplus_on_linear(torch_model_small_
 
     # count number of nn.Linear layers in original model
     count_linear_original = count_layers(torch_model_small_2d_2d, nn.Linear)
-    # count number of nn.Dropout layers in original model
+    # count number of softplus layers in original model
     count_softplus_original = count_layers(torch_model_small_2d_2d, nn.Softplus)
     # count number of nn.Sequential layers in original model
     count_sequential_original = count_layers(torch_model_small_2d_2d, nn.Sequential)
 
     # count number of nn.Linear layers in modified model
     count_linear_modified = count_layers(model, nn.Linear)
-    # count number of nn.Dropout layers in modified model
+    # count number of softplus layers in modified model
     count_softplus_modified = count_layers(model, nn.Softplus)
     # count number of nn.Sequential layers in modified model
     count_sequential_modified = count_layers(model, nn.Sequential)
@@ -40,7 +40,7 @@ def test_evidential_classification_appends_softplus_on_conv(torch_conv_linear_mo
 
     # count number of nn.Linear layers in original model
     count_linear_original = count_layers(torch_conv_linear_model, nn.Linear)
-    # count number of nn.Dropout layers in original model
+    # count number of softplus layers in original model
     count_softplus_original = count_layers(torch_conv_linear_model, nn.Softplus)
     # count number of nn.Sequential layers in original model
     count_sequential_original = count_layers(torch_conv_linear_model, nn.Sequential)
@@ -49,7 +49,7 @@ def test_evidential_classification_appends_softplus_on_conv(torch_conv_linear_mo
 
     # count number of nn.Linear layers in modified model
     count_linear_modified = count_layers(model, nn.Linear)
-    # count number of nn.Dropout layers in modified model
+    # count number of softplus layers in modified model
     count_softplus_modified = count_layers(model, nn.Softplus)
     # count number of nn.Sequential layers in modified model
     count_sequential_modified = count_layers(model, nn.Sequential)
@@ -63,11 +63,3 @@ def test_evidential_classification_appends_softplus_on_conv(torch_conv_linear_mo
     assert count_softplus_original == (count_softplus_modified - 1)
     assert count_sequential_original == (count_sequential_modified - 1)
     assert count_conv_original == count_conv_modified
-
-
-def test_custom_network(torch_custom_model: nn.Module) -> None:
-    """Tests the custom model modification with added dropout layers."""
-    model = evidential_classification(torch_custom_model)
-
-    # check if model type is correct
-    assert isinstance(model, nn.Sequential)

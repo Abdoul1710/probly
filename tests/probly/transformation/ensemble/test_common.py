@@ -1,43 +1,39 @@
-"""Tests for the ensemble transformation common logic."""
+"""Tests for commonpre ensemble generation."""
 
 from __future__ import annotations
 
-import importlib
-from typing import Any
+from unittest.mock import Mock
 
 import pytest
 
-
-def test_raises_if_no_impl_registered() -> None:
-    """It should raise if no implementation is registered."""
-    common = importlib.import_module("probly.transformation.ensemble.common")
-    importlib.reload(common)  # reset registry to clean state
-
-    class Dummy:
-        """Dummy predictor without registration."""
-
-    # Der Code wirft aktuell TypeError, nicht NotImplementedError
-    with pytest.raises(TypeError, match="unexpected keyword argument"):
-        _ = common.ensemble(Dummy(), num_members=2, reset_params=False)
+from probly.predictor import Predictor
+from probly.transformation import ensemble
+from probly.transformation.ensemble.common import ensemble_generator, register
 
 
-def test_register_wires_generator() -> None:
-    """It should wire the registered generator and forward arguments correctly."""
-    common = importlib.import_module("probly.transformation.ensemble.common")
-    importlib.reload(common)
+def test_unregistered_type_raises(dummy_predictor: Predictor) -> None:
+    """No ensemble generator is registered for type, NotImplementedError must occur."""
+    base = dummy_predictor
+    with pytest.raises(
+        NotImplementedError,
+        match=f"No ensemble generator is registered for type {type(base)}",
+    ):
+        ensemble_generator(dummy_predictor)
 
-    calls: list[tuple[Any, int, bool]] = []
 
-    class Dummy:
-        """Dummy predictor."""
+def test_registered_generator_called(dummy_predictor: Predictor) -> None:
+    """If the type is registered, the appropriate generator is called and its result is returned."""
+    mock_generator = Mock()
+    expected_result = object()
+    mock_generator.return_value = expected_result
 
-    def gen(obj: Dummy, *, n_members: int, reset_params: bool) -> str:
-        calls.append((obj, n_members, reset_params))
-        return "OK"
+    register(type(dummy_predictor), mock_generator)
 
-    common.register(Dummy, gen)
-    base = Dummy()
-    out = common.ensemble(base, num_members=5, reset_params=True)
+    result = ensemble(dummy_predictor, num_members=4)
 
-    assert out == "OK"
-    assert calls == [(base, 5, True)]
+    mock_generator.assert_called_once_with(
+        dummy_predictor,
+        num_members=4,
+        reset_params=True,
+    )
+    assert result is expected_result
