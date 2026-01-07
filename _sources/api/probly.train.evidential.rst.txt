@@ -10,4 +10,5 @@ probly.train.evidential
    :toctree:
    :recursive:
 
+   common
    torch

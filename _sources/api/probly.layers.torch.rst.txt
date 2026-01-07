@@ -11,5 +11,4 @@ probly.layers.torch
       BayesConv2d
       BayesLinear
       DropConnectLinear
-      NormalInverseGammaLinear
    

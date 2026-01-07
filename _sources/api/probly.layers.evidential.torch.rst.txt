@@ -1,0 +1,19 @@
+probly.layers.evidential.torch
+==============================
+
+.. automodule:: probly.layers.evidential.torch
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BatchedRadialFlowDensity
+      Encoder
+      EvidentialRegression
+      NatPNClassifier
+      NormalInverseGammaLinear
+      RadialFlowDensity
+      RadialFlowLayer
+      RadialFlowLayer2
+   

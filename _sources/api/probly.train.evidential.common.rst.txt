@@ -1,0 +1,12 @@
+probly.train.evidential.common
+==============================
+
+.. automodule:: probly.train.evidential.common
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      unified_evidential_train
+   
