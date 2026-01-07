@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from .array import ArrayCategoricalCredalSet, ArrayDiscreteCredalSet
-from .common import CategoricalCredalSet, CredalSet, DiscreteCredalSet
+from .credal_set import CredalSet, credal_set_from_sample
 
 __all__ = [
-    "ArrayCategoricalCredalSet",
-    "ArrayDiscreteCredalSet",
-    "CategoricalCredalSet",
     "CredalSet",
-    "DiscreteCredalSet",
+    "credal_set_from_sample",
 ]

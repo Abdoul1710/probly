@@ -1,144 +1,169 @@
-"""Unified Evidential Train Function."""
+"""Collection of torch evidential training functions."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal
-
 import torch
 from torch import nn
-
-from .common import _uet_dispatch
-
-if TYPE_CHECKING:
-    from torch.utils.data import DataLoader
+import torch.nn.functional as F
 
 
-@_uet_dispatch.register(torch.nn.Module)
-def _torch_uet(  # noqa: C901, PLR0912, PLR0915
-    model: nn.Module,
-    *,
-    mode: Literal["PostNet", "NatPostNet", "EDL", "PrNet", "IRD", "DER", "RPN"],
-    dataloader: DataLoader,
-    loss_fn: torch.Tensor = None,
-    oodloader: DataLoader = None,
-    flow: torch.Tensor = None,
-    class_count: torch.Tensor = None,
-    epochs: int = 5,
-    lr: float = 1e-3,
-    device: str = "cpu",
-) -> None:
-    """Trains a given Neural Network using different learning approaches, depending on the approach of a selected paper.
+class EvidentialLogLoss(nn.Module):
+    """Evidential Log Loss based on :cite:`sensoyEvidentialDeep2018`."""
 
-    Args:
-        mode:
-            Identifier of the paper-based training approach to be used.
-            Must be one of:
-            "PostNet", "NatPostNet", "EDL", "PrNet", "IRD", "DER" or "RPN".
+    def __init__(self) -> None:
+        """Intialize an instance of the EvidentialLogLoss class."""
+        super().__init__()
 
-        model:
-            The neural network to be trained.
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the evidential log loss.
 
-        dataloader:
-            Pytorch.Dataloader providing the In-Distributtion training samples and corresponding labels.
+        Args:
+            inputs: torch.Tensor of size (n_instances, n_classes)
+            targets: torch.Tensor of size (n_instances,)
 
-        loss_fn:
-            Loss functions used for training. The inputs of each loss-functions depends on the selected mode
+        Returns:
+            loss: torch.Tensor, mean loss value
 
-        oodloader:
-            Pytorch.Dataloader providing the Out-Of-Distributtion training samples and corresponding labels.
-            This is only required for certain modes such as "PrNet"
+        """
+        alphas = inputs + 1.0
+        strengths = torch.sum(alphas, dim=1)
+        loss = torch.mean(torch.log(strengths) - torch.log(alphas[torch.arange(targets.shape[0]), targets]))
+        return loss
 
-        flow:
-            Optional normalizing flow module used by posterior network-based methods like "PostNet"
 
-        class_count:
-            Tensor containing the number of samples per class.
+class EvidentialCELoss(nn.Module):
+    """Evidential Cross Entropy Loss based on :cite:`sensoyEvidentialDeep2018`."""
 
-        epochs:
-            Number of training epochs.
+    def __init__(self) -> None:
+        """Intialize an instance of the EvidentialCELoss class."""
+        super().__init__()
 
-        lr:
-            Learning rate used by the optimizer.
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the evidential cross entropy loss.
 
-        device:
-            Device on which the model is trained
-            (e.g. "cpu" or "cuda")
+        Args:
+            inputs: torch.Tensor of size (n_instances, n_classes)
+            targets: torch.Tensor of size (n_instances,)
 
-    Returns:
-        None.
-        The function performs training of the provided model and does not return a value.
-        But prints the total-losses per Epoch.
-    """
-    model = model.to(device)  # moves the model to the correct device (GPU or CPU)
-    if flow is not None:
-        flow = flow.to(device)
+        Returns:
+            loss: torch.Tensor, mean loss value
 
-    if mode == "PostNet":
-        if flow is None:
-            msg = "PostNet mode requires a flow module."
-            raise ValueError(msg)
-        optimizer = torch.optim.Adam(
-            list(model.parameters()) + list(flow.parameters()),
-            lr=lr,
+        """
+        alphas = inputs + 1.0
+        strengths = torch.sum(alphas, dim=1)
+        loss = torch.mean(torch.digamma(strengths) - torch.digamma(alphas[torch.arange(targets.shape[0]), targets]))
+        return loss
+
+
+class EvidentialMSELoss(nn.Module):
+    """Evidential Mean Square Error Loss based on :cite:`sensoyEvidentialDeep2018`."""
+
+    def __init__(self) -> None:
+        """Intialize an instance of the EvidentialMSELoss class."""
+        super().__init__()
+
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the evidential mean squared error loss.
+
+        Args:
+            inputs: torch.Tensor of size (n_instances, n_classes)
+            targets: torch.Tensor of size (n_instances,)
+
+        Returns:
+            loss: torch.Tensor, mean loss value
+
+        """
+        alphas = inputs + 1.0
+        strengths = torch.sum(alphas, dim=1)
+        y = F.one_hot(targets, inputs.shape[1])
+        p = alphas / strengths[:, None]
+        err = (y - p) ** 2
+        var = p * (1 - p) / (strengths[:, None] + 1)
+        loss = torch.mean(torch.sum(err + var, dim=1))
+        return loss
+
+
+class EvidentialKLDivergence(nn.Module):
+    """Evidential KL Divergence Loss based on :cite:`sensoyEvidentialDeep2018`."""
+
+    def __init__(self) -> None:
+        """Initialize an instance of the EvidentialKLDivergence class."""
+        super().__init__()
+
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the evidential KL divergence loss.
+
+        Args:
+            inputs: torch.Tensor of size (n_instances, n_classes)
+            targets: torch.Tensor of size (n_instances,)
+
+        Returns:
+            loss: torch.Tensor, mean loss value
+
+        """
+        alphas = inputs + 1.0
+        y = F.one_hot(targets, inputs.shape[1])
+        alphas_tilde = y + (1 - y) * alphas
+        strengths_tilde = torch.sum(alphas_tilde, dim=1)
+        k = torch.full((inputs.shape[0],), inputs.shape[1], device=inputs.device)
+        first = torch.lgamma(strengths_tilde) - torch.lgamma(k) - torch.sum(torch.lgamma(alphas_tilde), dim=1)
+        second = torch.sum(
+            (alphas_tilde - 1) * (torch.digamma(alphas_tilde) - torch.digamma(strengths_tilde)[:, None]),
+            dim=1,
         )
-    else:
-        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+        loss = torch.mean(first + second)
+        return loss
 
-    # repeats the training function for a defined number of epochs
-    for epoch in range(epochs):
-        model.train()  # call of train important for models like dropout
-        if flow is not None and mode == "PostNet":
-            flow.train()
-        total_loss = 0.0  # track total_loss to calculate average loss per epoch
 
-        for x_raw, y_raw in dataloader:
-            x = x_raw.to(device)
-            y = y_raw.to(device)
+class EvidentialNIGNLLLoss(nn.Module):
+    """Evidential normal inverse gamma negative log likelihood loss.
 
-            optimizer.zero_grad()  # clears old gradients
-            outputs = model(x)  # computes model-outputs
-            if mode == "PostNet":
-                loss, _ = loss_fn(outputs, y, flow, class_count)
+    Implementation is based on :cite:`aminiDeepEvidential2020`.
+    """
 
-            elif mode == "NatPostNet":
-                alpha, _, _ = outputs
-                loss = loss_fn(alpha, y)
+    def __init__(self) -> None:
+        """Intializes an instance of the EvidentialNIGNLLLoss class."""
+        super().__init__()
 
-            elif mode == "EDL":
-                loss = loss_fn(outputs, y)
+    def forward(self, inputs: dict[str, torch.Tensor], targets: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the evidential normal inverse gamma negative log likelihood loss.
 
-            elif mode in {"PrNet", "RPN"}:
-                ood_iter = iter(oodloader)
-                try:
-                    x_ood_raw, _ = next(ood_iter)
-                except StopIteration:
-                    ood_iter = iter(oodloader)
-                    x_ood_raw, _ = next(ood_iter)
+        Args:
+            inputs: dict[str, torch.Tensor] with keys 'gamma', 'nu', 'alpha', 'beta'
+            targets: torch.Tensor of size (n_instances,)
 
-                x_ood = x_ood_raw.to(device)
-                loss = loss_fn(model, x, y, x_ood)
+        Returns:
+            loss: torch.Tensor, mean loss value
 
-            elif mode == "IRD":
-                x_adv = x + 0.01 * torch.randn_like(x)
-                alpha = outputs
-                alpha_adv = model(x_adv)
-                y_oh = nn.functional.one_hot(
-                    y,
-                    num_classes=outputs.shape[1],
-                ).float()
-                loss = loss_fn(alpha, y_oh, adversarial_alpha=alpha_adv)
+        """
+        omega = 2 * inputs["beta"] * (1 + inputs["nu"])
+        loss = (
+            0.5 * torch.log(torch.pi / inputs["nu"])
+            - inputs["alpha"] * torch.log(omega)
+            + (inputs["alpha"] + 0.5) * torch.log((targets - inputs["gamma"]) ** 2 * inputs["nu"] + omega)
+            + torch.lgamma(inputs["alpha"])
+            - torch.lgamma(inputs["alpha"] + 0.5)
+        ).mean()
+        return loss
 
-            elif mode == "DER":
-                mu, kappa, alpha, beta = outputs
-                loss = loss_fn(y, mu, kappa, alpha, beta)
-            else:
-                msg = 'Enter a valid mode ["PostNet", "NatPostNet", "EDL", "PrNet", "IRD", "DER", "RPN"]'
-                raise ValueError(msg)
 
-            loss.backward()  # backpropagation
-            optimizer.step()  # updates model-parameters
+class EvidentialRegressionRegularization(nn.Module):
+    """Implementation of the evidential regression regularization :cite:`aminiDeepEvidential2020`."""
 
-            total_loss += loss.item()  # add-up the loss of this epoch ontop of our total loss
+    def __init__(self) -> None:
+        """Initialize an instance of the evidential regression regularization class."""
+        super().__init__()
 
-        avg_loss = total_loss / len(dataloader)  # calculate average loss per epoch across all batches
-        print(f"Epoch [{epoch + 1}/{epochs}] - Loss: {avg_loss:.4f}")  # noqa: T201
+    def forward(self, inputs: dict[str, torch.Tensor], targets: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the evidential regression regularization.
+
+        Args:
+            inputs: dict[str, torch.Tensor] with keys 'gamma', 'nu', 'alpha', 'beta'
+            targets: torch.Tensor of size (n_instances,)
+
+        Returns:
+            loss: torch.Tensor, mean loss value
+
+        """
+        loss = (torch.abs(targets - inputs["gamma"]) * (2 * inputs["nu"] + inputs["alpha"])).mean()
+        return loss

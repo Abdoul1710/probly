@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import pytest
 
-from probly.losses.evidential.torch import (
-    evidential_ce_loss,
-    evidential_kl_divergence,
-    evidential_log_loss,
-    evidential_mse_loss,
-    evidential_nignll_loss,
-    evidential_regression_regularization,
-)
 from probly.predictor import Predictor
+from probly.train.evidential.torch import (
+    EvidentialCELoss,
+    EvidentialKLDivergence,
+    EvidentialLogLoss,
+    EvidentialMSELoss,
+    EvidentialNIGNLLLoss,
+    EvidentialRegressionRegularization,
+)
 from probly.transformation import evidential_regression
 from tests.probly.torch_utils import validate_loss
 
@@ -25,7 +25,7 @@ def test_evidential_log_loss(
 ) -> None:
     inputs, targets = sample_classification_data
     outputs = evidential_classification_model(inputs)
-    criterion = evidential_log_loss
+    criterion = EvidentialLogLoss()
     loss = criterion(outputs, targets)
     validate_loss(loss)
 
@@ -36,7 +36,7 @@ def test_evidential_ce_loss(
 ) -> None:
     inputs, targets = sample_classification_data
     outputs = evidential_classification_model(inputs)
-    criterion = evidential_ce_loss
+    criterion = EvidentialCELoss()
     loss = criterion(outputs, targets)
     validate_loss(loss)
 
@@ -47,7 +47,7 @@ def test_evidential_mse_loss(
 ) -> None:
     inputs, targets = sample_classification_data
     outputs = evidential_classification_model(inputs)
-    criterion = evidential_mse_loss
+    criterion = EvidentialMSELoss()
     loss = criterion(outputs, targets)
     validate_loss(loss)
 
@@ -58,7 +58,7 @@ def test_evidential_kl_divergence(
 ) -> None:
     inputs, targets = sample_classification_data
     outputs = evidential_classification_model(inputs)
-    criterion = evidential_kl_divergence
+    criterion = EvidentialKLDivergence()
     loss = criterion(outputs, targets)
     validate_loss(loss)
 
@@ -71,7 +71,7 @@ def test_evidential_nig_nll_loss(
     targets = torch.randn(2, 1)
     model: Predictor = evidential_regression(torch_regression_model_1d)
     outputs = model(inputs)
-    criterion = evidential_nignll_loss
+    criterion = EvidentialNIGNLLLoss()
     loss = criterion(outputs, targets)
     validate_loss(loss)
 
@@ -79,7 +79,7 @@ def test_evidential_nig_nll_loss(
     targets = torch.randn(2, 2)
     model = evidential_regression(torch_regression_model_2d)
     outputs = model(inputs)
-    criterion = evidential_nignll_loss
+    criterion = EvidentialNIGNLLLoss()
     loss = criterion(outputs, targets)
     validate_loss(loss)
 
@@ -92,7 +92,7 @@ def test_evidential_regression_regularization(
     targets = torch.randn(2, 1)
     model: Predictor = evidential_regression(torch_regression_model_1d)
     outputs = model(inputs)
-    criterion = evidential_regression_regularization
+    criterion = EvidentialRegressionRegularization()
     loss = criterion(outputs, targets)
     validate_loss(loss)
 
@@ -100,6 +100,6 @@ def test_evidential_regression_regularization(
     targets = torch.randn(2, 2)
     model = evidential_regression(torch_regression_model_2d)
     outputs = model(inputs)
-    criterion = evidential_regression_regularization
+    criterion = EvidentialRegressionRegularization()
     loss = criterion(outputs, targets)
     validate_loss(loss)
