@@ -10,6 +10,5 @@
    :toctree:
    :recursive:
 
-   evidential
    flax
    torch

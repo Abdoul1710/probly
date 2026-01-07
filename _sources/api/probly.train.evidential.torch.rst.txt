@@ -4,3 +4,14 @@ probly.train.evidential.torch
 .. automodule:: probly.train.evidential.torch
 
    
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      EvidentialCELoss
+      EvidentialKLDivergence
+      EvidentialLogLoss
+      EvidentialMSELoss
+      EvidentialNIGNLLLoss
+      EvidentialRegressionRegularization
+   
