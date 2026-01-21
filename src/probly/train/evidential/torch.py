@@ -111,6 +111,9 @@ def unified_evidential_train(
                 class_count=class_count,
             )  # computes the loss based on the selected mode
 
+            if isinstance(loss, tuple):
+                loss = loss[0]
+
             loss.backward()  # backpropagation
             optimizer.step()  # updates model-parameters
 
