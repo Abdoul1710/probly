@@ -3,16 +3,20 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Evidential Model for Classification" href="train_evidential_classification.html" /><link rel="prev" title="Calibration using Temperature Scaling" href="temperature_scaling_calibration.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>Bayesian Neural Networks - probly 0.3.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=201d0c9a" />
     
     
 
@@ -206,125 +210,51 @@
 <div id="searchbox"></div><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Content</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">The <code class="docutils literal notranslate"><span class="pre">probly</span></code> Python Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core_concepts.html">Core Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main_components.html">Main Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_topics.html">Advanced Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_and_tutorials.html">Examples and Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../methods.html">Implemented methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="fashionmnist_ood_ensemble.html">Out-of-Distribution Detection with an Ensemble</a></li>
-<li class="toctree-l1"><a class="reference internal" href="label_relaxation_calibration.html">Calibration with Label Relaxation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sklearn_selective_prediction.html">Using probly with scikit-learn</a></li>
-<li class="toctree-l1"><a class="reference internal" href="temperature_scaling_calibration.html">Calibration using Temperature Scaling</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Bayesian Neural Networks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="train_evidential_classification.html">Evidential Model for Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="train_evidential_regression.html">Evidential Regression Model</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">API</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.datasets.html">probly.datasets</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of probly.datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.datasets.torch.html">probly.datasets.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.evaluation.html">probly.evaluation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of probly.evaluation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.evaluation.metrics.html">probly.evaluation.metrics</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.evaluation.tasks.html">probly.evaluation.tasks</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.layers.html">probly.layers</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of probly.layers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.layers.flax.html">probly.layers.flax</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.layers.torch.html">probly.layers.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.plot.html">probly.plot</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of probly.plot</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.plot.credal.html">probly.plot.credal</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../api/probly.predictor.html">probly.predictor</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.quantification.html">probly.quantification</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of probly.quantification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.quantification.classification.html">probly.quantification.classification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.quantification.regression.html">probly.quantification.regression</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.representation.html">probly.representation</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of probly.representation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/probly.representation.credal_set.html">probly.representation.credal_set</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of probly.representation.credal_set</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.credal_set.array.html">probly.representation.credal_set.array</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.credal_set.array_functions.html">probly.representation.credal_set.array_functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.credal_set.common.html">probly.representation.credal_set.common</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.representation.distribution.html">probly.representation.distribution</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.representation.representer.html">probly.representation.representer</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/probly.representation.sampling.html">probly.representation.sampling</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of probly.representation.sampling</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.array_sample.html">probly.representation.sampling.array_sample</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.array_sample_axis_tracking.html">probly.representation.sampling.array_sample_axis_tracking</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.array_sample_functions.html">probly.representation.sampling.array_sample_functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.common_sample.html">probly.representation.sampling.common_sample</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.flax_sampler.html">probly.representation.sampling.flax_sampler</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.jax_sample.html">probly.representation.sampling.jax_sample</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.sample.html">probly.representation.sampling.sample</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.sampler.html">probly.representation.sampling.sampler</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.torch_sample.html">probly.representation.sampling.torch_sample</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.representation.sampling.torch_sampler.html">probly.representation.sampling.torch_sampler</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.train.html">probly.train</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of probly.train</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/probly.train.bayesian.html">probly.train.bayesian</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of probly.train.bayesian</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.train.bayesian.torch.html">probly.train.bayesian.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/probly.train.calibration.html">probly.train.calibration</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of probly.train.calibration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.train.calibration.torch.html">probly.train.calibration.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/probly.train.evidential.html">probly.train.evidential</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of probly.train.evidential</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../api/probly.train.evidential.torch.html">probly.train.evidential.torch</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.transformation.html">probly.transformation</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of probly.transformation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.transformation.bayesian.html">probly.transformation.bayesian</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.transformation.dropconnect.html">probly.transformation.dropconnect</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.transformation.dropout.html">probly.transformation.dropout</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.transformation.ensemble.html">probly.transformation.ensemble</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../api/probly.transformation.evidential.html">probly.transformation.evidential</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of probly.transformation.evidential</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../api/probly.transformation.evidential.classification.html">probly.transformation.evidential.classification</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of probly.transformation.evidential.classification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../api/probly.transformation.evidential.classification.common.html">probly.transformation.evidential.classification.common</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/probly.transformation.evidential.classification.torch.html">probly.transformation.evidential.classification.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../api/probly.transformation.evidential.regression.html">probly.transformation.evidential.regression</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of probly.transformation.evidential.regression</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../api/probly.transformation.evidential.regression.common.html">probly.transformation.evidential.regression.common</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../api/probly.transformation.evidential.regression.torch.html">probly.transformation.evidential.regression.torch</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.traverse_nn.html">probly.traverse_nn</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of probly.traverse_nn</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.traverse_nn.common.html">probly.traverse_nn.common</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.traverse_nn.flax.html">probly.traverse_nn.flax</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.traverse_nn.torch.html">probly.traverse_nn.torch</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../api/probly.utils.html">probly.utils</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of probly.utils</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.utils.errors.html">probly.utils.errors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.utils.probabilities.html">probly.utils.probabilities</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.utils.sets.html">probly.utils.sets</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.utils.switchdispatch.html">probly.utils.switchdispatch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../api/probly.utils.torch.html">probly.utils.torch</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to probly 🏔️</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References and Further Reading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ and Troubleshooting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Notebooks</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../notebooks/examples/index.html">Notebook Examples</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Notebook Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../notebooks/examples/utilities_and_layers/index.html">Utilities and Layers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Utilities and Layers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../notebooks/examples/utilities_and_layers/custom_loss_functions.html">Custom Loss Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../notebooks/examples/utilities_and_layers/metrics.html">Evaluation Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../notebooks/examples/utilities_and_layers/probabilistic_layers.html">Key Probabilistic Layers in <code class="docutils literal notranslate"><span class="pre">probly</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../notebooks/examples/utilities_and_layers/utility_functions.html">Utility Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../notebooks/examples/evaluation_and_quantification/index.html">Evaluation and Quantification</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Evaluation and Quantification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../notebooks/examples/evaluation_and_quantification/calibration_metrics.html">Calibration Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../notebooks/examples/evaluation_and_quantification/interpretation_techniques.html">Interpretation techniques</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../notebooks/examples/evaluation_and_quantification/visualization_tools.html">Visualisation Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/bayesian_transformation.html">Bayesian Transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/dropconnect_transformation.html">Dropconnect Transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/dropout_transformation.html">Dropout Transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/ensemble_transformation.html">Ensemble Transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/evidential_classification_transformation.html">Evidential Classification Transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/evidential_regression_transformation.html">Evidential Regression Transformation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/fashionmnist_ood_ensemble.html">Out-of-Distribution Detection with an Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/label_relaxation_calibration.html">Calibration with Label Relaxation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/lazy_dispatch_test.html">Lazy Dispatch Test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/multilib_demo.html">Multilib Demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/pytraverse_tutorial.html">A Brief Introduction to PyTraverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/sklearn_selective_prediction.html">Using probly with scikit-learn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/temperature_scaling_calibration.html">Calibration using Temperature Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/train_bnn_classification.html">Bayesian Neural Networks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/train_evidential_classification.html">Evidential Model for Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/examples/train_evidential_regression.html">Evidential Regression Model</a></li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -477,130 +407,130 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  5%|▌         | 1/20 [00:10&lt;03:20, 10.53s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  5%|▌         | 1/20 [00:10&lt;03:14, 10.25s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 1, Running loss: 2.4207534445093035, KL: 94045.21875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 1, Running loss: 2.3897136982451093, KL: 94057.890625
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 10%|█         | 2/20 [00:20&lt;03:04, 10.24s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 10%|█         | 2/20 [00:20&lt;03:06, 10.34s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 2, Running loss: 1.7625010044016736, KL: 94134.6875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 2, Running loss: 1.7351684737712778, KL: 94150.6484375
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 15%|█▌        | 3/20 [00:30&lt;02:52, 10.18s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 15%|█▌        | 3/20 [00:31&lt;02:55, 10.35s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 3, Running loss: 1.6143848358316624, KL: 94217.8046875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 3, Running loss: 1.6063903752793658, KL: 94232.421875
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 20%|██        | 4/20 [00:40&lt;02:42, 10.13s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 20%|██        | 4/20 [00:41&lt;02:44, 10.29s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 4, Running loss: 1.544742205295157, KL: 94299.0
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 4, Running loss: 1.5390628596569629, KL: 94314.046875
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 25%|██▌       | 5/20 [00:50&lt;02:31, 10.10s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 25%|██▌       | 5/20 [00:51&lt;02:33, 10.24s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 5, Running loss: 1.4946847834485641, KL: 94383.8046875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 5, Running loss: 1.4838242551113696, KL: 94396.0234375
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 30%|███       | 6/20 [01:00&lt;02:21, 10.13s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 30%|███       | 6/20 [01:01&lt;02:22, 10.19s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 6, Running loss: 1.4544967428166815, KL: 94470.3359375
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 6, Running loss: 1.4422635195103097, KL: 94480.1328125
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 35%|███▌      | 7/20 [01:10&lt;02:11, 10.09s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 35%|███▌      | 7/20 [01:11&lt;02:12, 10.17s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 7, Running loss: 1.4172436328644449, KL: 94555.3984375
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 7, Running loss: 1.4108618665248789, KL: 94569.0390625
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 40%|████      | 8/20 [01:21&lt;02:01, 10.09s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 40%|████      | 8/20 [01:21&lt;02:02, 10.20s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 8, Running loss: 1.3891127028363817, KL: 94646.71875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 8, Running loss: 1.3820765261954449, KL: 94655.9765625
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 45%|████▌     | 9/20 [01:31&lt;01:53, 10.33s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 45%|████▌     | 9/20 [01:32&lt;01:53, 10.32s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 9, Running loss: 1.3701187615698955, KL: 94740.890625
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 9, Running loss: 1.362961903024227, KL: 94749.578125
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 50%|█████     | 10/20 [01:42&lt;01:43, 10.31s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 50%|█████     | 10/20 [01:42&lt;01:42, 10.26s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 10, Running loss: 1.3505153067568516, KL: 94835.7421875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 10, Running loss: 1.340890346689427, KL: 94836.3671875
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 55%|█████▌    | 11/20 [01:52&lt;01:32, 10.27s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 55%|█████▌    | 11/20 [01:52&lt;01:32, 10.28s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 11, Running loss: 1.335881043495016, KL: 94929.421875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 11, Running loss: 1.3304328751056753, KL: 94929.78125
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 60%|██████    | 12/20 [02:02&lt;01:22, 10.31s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 60%|██████    | 12/20 [02:03&lt;01:22, 10.29s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 12, Running loss: 1.3261284645567548, KL: 95024.1953125
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 12, Running loss: 1.314567095675367, KL: 95019.703125
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 65%|██████▌   | 13/20 [02:13&lt;01:12, 10.34s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 65%|██████▌   | 13/20 [02:13&lt;01:11, 10.23s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 13, Running loss: 1.3145434059995287, KL: 95121.8203125
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 13, Running loss: 1.3029702496021351, KL: 95116.0546875
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 70%|███████   | 14/20 [02:23&lt;01:02, 10.36s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 70%|███████   | 14/20 [02:23&lt;01:01, 10.21s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 14, Running loss: 1.303467125588275, KL: 95216.2890625
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 14, Running loss: 1.294949499089667, KL: 95209.7109375
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 75%|███████▌  | 15/20 [02:34&lt;00:52, 10.42s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 75%|███████▌  | 15/20 [02:33&lt;00:51, 10.22s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 15, Running loss: 1.2922741068170425, KL: 95312.921875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 15, Running loss: 1.2840835758980285, KL: 95298.21875
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 80%|████████  | 16/20 [02:44&lt;00:41, 10.43s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 80%|████████  | 16/20 [02:43&lt;00:40, 10.23s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 16, Running loss: 1.2869641364888942, KL: 95409.4765625
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 16, Running loss: 1.2782701791600979, KL: 95394.6875
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 85%|████████▌ | 17/20 [02:55&lt;00:31, 10.44s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 85%|████████▌ | 17/20 [02:54&lt;00:30, 10.21s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 17, Running loss: 1.2798084436578954, KL: 95506.921875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 17, Running loss: 1.2703977975439518, KL: 95491.5625
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 90%|█████████ | 18/20 [03:05&lt;00:20, 10.40s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 90%|█████████ | 18/20 [03:04&lt;00:20, 10.23s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 18, Running loss: 1.2714758502676131, KL: 95601.9375
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 18, Running loss: 1.263349613230279, KL: 95581.84375
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 95%|█████████▌| 19/20 [03:15&lt;00:10, 10.36s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 95%|█████████▌| 19/20 [03:14&lt;00:10, 10.30s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 19, Running loss: 1.2655935074420686, KL: 95705.59375
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 19, Running loss: 1.2584343271052583, KL: 95680.109375
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 20/20 [03:26&lt;00:00, 10.30s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 20/20 [03:24&lt;00:00, 10.25s/it]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 20, Running loss: 1.2595517417217823, KL: 95808.8359375
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 20, Running loss: 1.254611458169653, KL: 95778.28125
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Accuracy: 0.8776000142097473
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Accuracy: 0.8773999810218811
 </pre></div>
 </div>
 </div>
@@ -613,26 +543,8 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="train_evidential_classification.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Evidential Model for Classification</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="temperature_scaling_calibration.html">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Calibration using Temperature Scaling</div>
-                
-              </div>
-            </a>
+          
+          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
