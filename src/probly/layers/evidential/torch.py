@@ -346,6 +346,27 @@ class MLPEncoder(nn.Module):
         return self.net(x)
 
 
+class FlattenMLPEncoder(nn.Module):
+    def __init__(self, input_dim: int = 1, hidden_dim: int = 64, latent_dim: int = 64) -> None:
+        """Flatten + 2-layer MLP encoder producing a latent vector z."""
+        super().__init__()
+        self.latent_dim = latent_dim
+        self.net = nn.Sequential(
+            nn.Flatten(start_dim=1),
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, latent_dim),
+            nn.ReLU(),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Args:
+            x: Input tensor of shape (B, ...).
+        Returns: z: Latent tensor of shape (B, latent_dim).
+        """
+        return self.net(x)
+
+
 class EvidentialHead(nn.Module):
     """Head that converts encoded features into evidential Normal-Gamma parameters."""
 
@@ -375,3 +396,21 @@ class EvidentialHead(nn.Module):
         beta = F.softplus(raw[:, 3:4])
 
         return mu, kappa, alpha, beta
+
+
+class PostNetHead(nn.Module):
+    """Head that maps latent features to class-wise Dirichlet parameters."""
+
+    def __init__(self, latent_dim: int, num_classes: int) -> None:
+        """Initialize the the head."""
+        super().__init__()
+        self.linear = nn.Linear(latent_dim, num_classes)
+
+    def forward(self, z: torch.Tensor) -> torch.Tensor:
+        """Returns:
+        alpha: (B, num_classes) Dirichlet concentrations.
+        """  # noqa: D205
+        # Raw evidence -> positive Dirichlet parameters
+        logits = self.linear(z)
+        alpha = torch.nn.functional.softplus(logits) + 1.0  # shape [B, C]
+        return alpha
