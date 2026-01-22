@@ -26,7 +26,14 @@ class NormalInverseGammaLinear(nn.Module):
 
     """
 
-    def __init__(self, in_features: int, out_features: int, device: torch.device = None, *, bias: bool = True) -> None:
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        device: torch.device | None = None,
+        *,
+        bias: bool = True,
+    ) -> None:
         """Initialize an instance of the NormalInverseGammaLinear layer.
 
         Args:
@@ -79,20 +86,6 @@ class NormalInverseGammaLinear(nn.Module):
             init.uniform_(self.nu_bias, -bound, bound)
             init.uniform_(self.alpha_bias, -bound, bound)
             init.uniform_(self.beta_bias, -bound, bound)
-
-
-class SimpleCNN(nn.Module):
-    """Simple CNN."""
-
-    def __init__(self, num_classes: int = 10) -> torch.Tensor:  # noqa: D107
-        super().__init__()
-        self.fc1 = nn.Linear(28 * 28 * 1, 128)
-        self.fc2 = nn.Linear(128, num_classes)
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:  # noqa: D102
-        x = torch.flatten(x, 1)
-        x = F.relu(self.fc1(x))
-        return F.softplus(self.fc2(x))  # use of softplus so that our output is always positive
 
 
 # radial flows
@@ -177,98 +170,6 @@ class BatchedRadialFlowDensity(nn.Module):
         return logp.transpose(0, 1)  # [B,C]
 
 
-class ConvDPN(nn.Module):
-    """Convolutional Dirichlet Prior Network producing concentration parameters (alpha)."""
-
-    def __init__(self, num_classes: int = 10) -> None:
-        """Initialize the ConvDPN model with the given number of output classes."""
-        super().__init__()
-
-        # Convolutional feature extractor
-        self.features = nn.Sequential(
-            nn.Conv2d(1, 64, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-        )
-
-        # Fully-connected classifier head
-        self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(128 * 7 * 7, 256),
-            nn.ReLU(),
-            nn.Linear(256, num_classes),
-        )
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Return Dirichlet concentration parameters (alpha)(x) > 0."""
-        x = self.features(x)
-        logits = self.classifier(x)
-        alpha = F.softplus(logits) + 1e-3
-        return alpha
-
-
-class GrayscaleMNISTCNN(nn.Module):
-    """Simple Evidential CNN for grayscale MNIST images.
-    Returns Dirichlet parameters (alpha) as output.
-    """  # noqa: D205
-
-    def __init__(self, num_classes: int = 10) -> None:
-        """Initialize the CNN."""
-        super().__init__()
-        # (batch, 1, 28, 28) -> (batch, 32, 28, 28)
-        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm2d(32)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
-        self.bn2 = nn.BatchNorm2d(64)
-        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
-        self.bn3 = nn.BatchNorm2d(128)
-
-        self.pool = nn.MaxPool2d(2, 2)
-        self.relu = nn.ReLU(inplace=True)
-
-        # After 3 pooling layers: 28 -> 14 -> 7 -> 3 (with padding)
-        # Actual: 28 -> 14 -> 7 -> 3
-        self.fc1 = nn.Linear(128 * 3 * 3, 256)
-        self.dropout = nn.Dropout(0.5)
-        self.fc2 = nn.Linear(256, num_classes)
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass."""
-        # Conv block 1
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.pool(x)  # 28 -> 14
-
-        # Conv block 2
-        x = self.conv2(x)
-        x = self.bn2(x)
-        x = self.relu(x)
-        x = self.pool(x)  # 14 -> 7
-
-        # Conv block 3
-        x = self.conv3(x)
-        x = self.bn3(x)
-        x = self.relu(x)
-        x = self.pool(x)  # 7 -> 3
-
-        # Flatten and fully connected
-        x = x.view(x.size(0), -1)
-        x = self.fc1(x)
-        x = self.relu(x)
-        x = self.dropout(x)
-        x = self.fc2(x)
-
-        # Turn outputs into alpha values for evidential learning
-        x = self.relu(x)
-        x = x + torch.ones_like(x)
-
-        return x
-
-
 class RadialFlowLayer2(nn.Module):
     """Single radial flow layer for a latent vector z ∈ R^D."""
 
@@ -321,16 +222,31 @@ class RadialFlowLayer2(nn.Module):
         return z_new, log_abs_det
 
 
-class Encoder(nn.Module):
+class SimpleHead(nn.Module):
+    """Simple classification head outputting class evidence."""
+
+    def __init__(self, latent_dim: int, hidden_dim: int = 128, num_classes: int = 10) -> None:  # noqa: D107
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(latent_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, num_classes),
+        )
+
+    def forward(self, z: torch.Tensor) -> torch.Tensor:  # noqa: D102
+        return F.softplus(self.net(z))
+
+
+class EncoderMnist(nn.Module):
     """Simple encoder mapping MNIST images to a low-dimensional latent vector z."""
 
-    def __init__(self, latent_dim: int = 2) -> None:  # noqa: D107
+    def __init__(self, input_dim: int = 784, hidden_dim: int = 256, latent_dim: int = 2) -> None:  # noqa: D107
         super().__init__()
         self.net = nn.Sequential(
             nn.Flatten(),  # [B, 1, 28, 28] -> [B, 784]
-            nn.Linear(28 * 28, 256),
+            nn.Linear(input_dim, hidden_dim),
             nn.ReLU(),
-            nn.Linear(256, latent_dim),  # [B, latent_dim]
+            nn.Linear(hidden_dim, latent_dim),  # [B, latent_dim]
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -395,83 +311,148 @@ class RadialFlowDensity(nn.Module):
         return logp
 
 
-class NatPNClassifier(nn.Module):
-    """Natural Posterior Network for classification with a Dirichlet posterior over class probabilities."""
+class MLPEncoder(nn.Module):
+    """Simple MLP encoder used to transform inputs into feature embeddings.
+
+    This module contains no evidential logic.
+    """
+
+    def __init__(self, input_dim: int = 1, hidden_dim: int = 64, feature_dim: int = 64) -> None:
+        """Initialize the encoder.
+
+        Args:
+            input_dim: Size of input features.
+            hidden_dim: Number of neurons in hidden layers.
+            feature_dim: Dimension of the output feature representation.
+        """
+        super().__init__()
+        self.feature_dim = feature_dim
+        self.net = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, feature_dim),
+            nn.ReLU(),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Compute feature embedding.
+
+        Args:
+            x: Input tensor of shape (N, input_dim).
+
+        Returns:
+            Feature tensor of shape (N, feature_dim).
+        """
+        return self.net(x)
+
+
+class EvidentialHead(nn.Module):
+    """Head that converts encoded features into evidential Normal-Gamma parameters."""
+
+    def __init__(self, latent_dim: int) -> None:
+        """Initialize the head.
+
+        Args:
+            latent_dim: Dimension of input features coming from the encoder.
+        """
+        super().__init__()
+        self.linear = nn.Linear(latent_dim, 4)
+
+    def forward(self, features: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Convert features into (mu, kappa, alpha, beta).
+
+        Args:
+            features: Feature tensor (N, feature_dim)
+
+        Returns:
+            Tuple of four tensors representing Normal-Gamma parameters.
+        """
+        raw = self.linear(features)
+
+        mu = raw[:, 0:1]
+        kappa = F.softplus(raw[:, 1:2])
+        alpha = F.softplus(raw[:, 2:3]) + 1.0
+        beta = F.softplus(raw[:, 3:4])
+
+        return mu, kappa, alpha, beta
+
+
+class DirichletMLPEncoder(nn.Module):
+    """Simple MLP encoder for transforming inputs into feature embeddings.
+
+    This module contains no evidential logic, only feature extraction.
+    """
 
     def __init__(
         self,
-        num_classes: int = 10,
-        latent_dim: int = 2,
-        flow_length: int = 4,
-        certainty_budget: float | None = None,
-        n_prior: float | None = None,
+        input_dim: int,
+        hidden_dim: int = 128,
+        latent_dim: int = 128,
     ) -> None:
-        """Initialize the NatPN classifier and its components."""
-        super().__init__()
-
-        self.num_classes = num_classes
-        self.latent_dim = latent_dim
-
-        # 1. Encoder: x -> z
-        self.encoder = Encoder(latent_dim=latent_dim)
-
-        # 2. Decoder: z -> logits for each class (SMOOTHED)
-        self.classifier = nn.Sequential(
-            nn.Linear(latent_dim, 64),
-            nn.ReLU(),
-            nn.Linear(64, num_classes),
-        )
-
-        # 3. Single normalizing flow density over z
-        self.flow = RadialFlowDensity(dim=latent_dim, flow_length=flow_length)
-
-        # 4. Certainty budget N_H: scales the density into "evidence"
-        #    Intuition: total evidence mass to distribute over the latent space.
-        if certainty_budget is None:
-            certainty_budget = float(latent_dim)
-        self.certainty_budget = certainty_budget
-
-        # 5. Prior pseudo-count n_prior and prior χ_prior
-        if n_prior is None:
-            n_prior = float(num_classes)
-
-        # χ_prior: uniform over classes
-        chi_prior = torch.full((num_classes,), 1.0 / num_classes)  # [C]
-        alpha_prior = n_prior * chi_prior  # [C] -> Dirichlet(1,1,...,1)
-
-        # Register as buffer so it is moved automatically with model.to(device)
-        self.register_buffer("alpha_prior", alpha_prior)
-
-    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Forward pass.
+        """Initialize the MLP encoder.
 
         Args:
-            x: Input batch, shape [B, 1, 28, 28] for MNIST.
+            input_dim: Size of input features (flattened or 1D).
+            hidden_dim: Number of neurons in hidden layers (default: 128).
+            latent_dim: Dimension of output feature representation (default: 128).
+        """
+        super().__init__()
+        self.latent_dim = latent_dim
+        self.net = nn.Sequential(
+            nn.Linear(input_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim, latent_dim),
+            nn.ReLU(),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Compute feature embedding.
+
+        Args:
+            x: Input tensor of shape (batch_size, input_dim).
 
         Returns:
-            alpha: Posterior Dirichlet parameters, shape [B, C].
-            z: Latent representation, shape [B, latent_dim].
-            log_pz: Log-density log p(z) under the flow, shape [B].
+            Feature tensor of shape (batch_size, latent_dim).
         """
-        # Encode to latent space
-        z = self.encoder(x)  # [B, latent_dim]
+        return self.net(x)
 
-        # Class logits -> per-class χ (like normalized preferences)
-        logits = self.classifier(z)  # [B, C]
-        chi = torch.softmax(logits, dim=-1)  # [B, C], sums to 1
 
-        # Flow density over z -> log p(z)
-        log_pz = self.flow.log_prob(z)  # [B]
+class DirichletHead(nn.Module):
+    """Head that converts encoded features into Dirichlet concentration parameters (alpha).
 
-        # Convert density into scalar evidence n(x)
-        # n(x) = N_H * exp(log p(z)) = N_H * p(z)
-        n = self.certainty_budget * log_pz.exp()  # [B], evidence ≥ 0
-        n = torch.clamp(n, min=1e-8)  # avoid exact zero for numerical stability
+    For multi-class classification, this head outputs K alpha values (one per class),
+    where alpha forms a K-dimensional Dirichlet distribution.
+    """
 
-        # Evidence per class: n_i * χ_i  -> pseudo-counts
-        evidence = n.unsqueeze(-1) * chi  # [B, C]
+    def __init__(self, latent_dim: int, num_classes: int) -> None:
+        """Initialize the Dirichlet head.
 
-        # Posterior Dirichlet parameters: alpha = alpha_prior + evidence
-        alpha = self.alpha_prior.unsqueeze(0) + evidence  # [B, C]
+        Args:
+            latent_dim: Dimension of input features from the encoder.
+            num_classes: Number of output classes (K in Dirichlet(α)).
+        """  # noqa: RUF002
+        super().__init__()
+        self.num_classes = num_classes
+        self.linear = nn.Linear(latent_dim, num_classes)
 
-        return alpha, z, log_pz
+    def forward(self, features: torch.Tensor) -> torch.Tensor:
+        """Convert features into Dirichlet concentration parameters (alpha).
+
+        Args:
+            features: Feature tensor (batch_size, latent_dim) from encoder.
+
+        Returns:
+            Alpha parameters of shape (batch_size, num_classes), all > 0.
+        """
+        # Linear projection to num_classes dimensions
+        logits = self.linear(features)
+
+        # Ensure alpha > 0 by applying softplus and adding small offset
+        # alpha = softplus(logits) + 1.0 ensures all values >= 1.0
+        alpha = F.softplus(logits) + 1.0
+
+        return alpha
