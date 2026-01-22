@@ -5,11 +5,28 @@ from __future__ import annotations
 import torch
 from torch import nn
 
-from probly.layers.evidential.torch import EncoderMnist, EvidentialHead, MLPEncoder, RadialFlowDensity, SimpleHead
+from probly.layers.evidential.torch import (
+    EncoderMnist,
+    EvidentialHead,
+    MLPEncoder,
+    RadialFlowDensity,
+    SimpleHead,
+)
 
 
 class NatPN(nn.Module):
-    """Docstring for NatPN."""
+    """Natural Posterior Network for evidential deep learning with normalizing flows.
+
+    Combines encoder, normalizing flow density, and head for uncertainty quantification.
+    Users can provide custom encoders for different data modalities.
+
+    Args:
+        encoder: Encoder module mapping raw inputs to latent space.
+        head: Head module (DirichletHead for classification, GaussianHead for regression).
+        latent_dim: Dimension of the latent space.
+        flow_length: Number of radial flow layers. Defaults to 4.
+        certainty_budget: Budget for certainty calibration. If None, defaults to latent_dim.
+    """
 
     def __init__(
         self,
@@ -19,7 +36,7 @@ class NatPN(nn.Module):
         flow_length: int = 4,
         certainty_budget: float | None = None,
     ) -> None:
-        """Init for NatPN model."""
+        """Initialize the NatPN model."""
         super().__init__()
 
         self.encoder = encoder
@@ -34,8 +51,26 @@ class NatPN(nn.Module):
             certainty_budget = float(latent_dim)
         self.certainty_budget = certainty_budget
 
+    def freeze_encoder(self) -> None:
+        """Freeze encoder weights (for transfer learning)."""
+        for param in self.encoder.parameters():
+            param.requires_grad = False
+
+    def unfreeze_encoder(self) -> None:
+        """Unfreeze encoder weights (for fine-tuning)."""
+        for param in self.encoder.parameters():
+            param.requires_grad = True
+
     def forward(self, x: torch.Tensor) -> dict[str, torch.Tensor]:
-        """Infer forward pass."""
+        """Forward pass through encoder, flow, and head.
+
+        Args:
+            x: Input tensor compatible with the encoder.
+
+        Returns:
+            Dictionary with predictions from the head (including alpha for classification,
+            or mean/var for regression) along with latent space information.
+        """
         z = self.encoder(x)  # [B, latent_dim]
         log_pz = self.flow.log_prob(z)  # [B]
 
@@ -47,7 +82,18 @@ class NatPN(nn.Module):
 
 
 class DirichletHead(nn.Module):
-    """Dirichlet posterior head for classification."""
+    """Dirichlet posterior head for evidential classification.
+
+    Takes latent representations and outputs Dirichlet parameters for uncertainty
+    quantification in classification. This head should be used with an encoder to
+    create a complete classification model.
+
+    Args:
+        latent_dim: Dimension of input latent vectors from an encoder.
+        num_classes: Number of classification classes.
+        hidden_dim: Dimension of hidden layer. Defaults to 64.
+        n_prior: Prior for evidence scaling. If None, defaults to num_classes.
+    """
 
     def __init__(
         self,
@@ -56,7 +102,7 @@ class DirichletHead(nn.Module):
         hidden_dim: int = 64,
         n_prior: float | None = None,
     ) -> None:
-        """Init for DirichletHead."""
+        """Initialize the DirichletHead."""
         super().__init__()
 
         self.num_classes = num_classes
@@ -81,7 +127,20 @@ class DirichletHead(nn.Module):
         log_pz: torch.Tensor,
         certainty_budget: float,
     ) -> dict[str, torch.Tensor]:
-        """Forward pass for DirichletHead."""
+        """Compute Dirichlet parameters for evidential classification.
+
+        Args:
+            z: Latent representations of shape [B, latent_dim].
+            log_pz: Log probability from density estimator of shape [B].
+            certainty_budget: Budget parameter for evidence scaling.
+
+        Returns:
+            Dictionary containing:
+                - alpha: Dirichlet parameters [B, num_classes]
+                - z: Input latent representations
+                - log_pz: Log density values
+                - evidence: Scaled evidence [B, num_classes]
+        """
         logits = self.classifier(z)  # [B, C]
         chi = torch.softmax(logits, dim=-1)  # [B, C]
 
@@ -101,14 +160,23 @@ class DirichletHead(nn.Module):
 
 
 class GaussianHead(nn.Module):
-    """Gaussian posterior head for regression."""
+    """Gaussian posterior head for evidential regression.
+
+    Takes latent representations and outputs mean and variance for Gaussian
+    uncertainty quantification in regression. This head should be used with an encoder
+    to create a complete regression model.
+
+    Args:
+        latent_dim: Dimension of input latent vectors from an encoder.
+        out_dim: Dimension of regression output. Defaults to 1 (univariate regression).
+    """
 
     def __init__(
         self,
         latent_dim: int,
         out_dim: int = 1,
     ) -> None:
-        """Init for GaussianHead."""
+        """Initialize the GaussianHead."""
         super().__init__()
 
         self.mean_net = nn.Linear(latent_dim, out_dim)
@@ -120,7 +188,21 @@ class GaussianHead(nn.Module):
         log_pz: torch.Tensor,
         certainty_budget: float,
     ) -> dict[str, torch.Tensor]:
-        """Forward pass for GaussianHead."""
+        """Compute Gaussian parameters for evidential regression.
+
+        Args:
+            z: Latent representations of shape [B, latent_dim].
+            log_pz: Log probability from density estimator of shape [B].
+            certainty_budget: Budget parameter for precision scaling.
+
+        Returns:
+            Dictionary containing:
+                - mean: Predicted mean [B, out_dim]
+                - var: Predicted variance [B, out_dim]
+                - z: Input latent representations
+                - log_pz: Log density values
+                - precision: Scaled precision [B, out_dim]
+        """
         mean = self.mean_net(z)  # [B, D]
         log_var = self.log_var_net(z)  # [B, D]
 
