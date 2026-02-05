@@ -554,7 +554,7 @@ For evidential regression, the model outputs (μ, κ, α, β):
 Comprehensive tutorials are available in ``notebooks/examples/unified_evidential_train/``:
 
 - `unified_evidential_function_notebook.ipynb <_static/notebooks/examples/unified_evidential_train/unified_evidential_function_notebook.ipynb>`_ — Unified training function demo with EDL on MNIST, including OOD detection using FashionMNIST
-- `Prior_Networks.ipynb <_static/notebooks/examples/unified_evidential_train/Prior_Networks.ipynb>`_ — Dirichlet Prior Networks (Malinin & Gales, 2018) with KL-based training, entropy analysis, and OOD detection AUC
+- `Prior_Networks.ipynb  — Dirichlet Prior Networks (Malinin & Gales, 2018) with KL-based training, entropy analysis, and OOD detection AUC
 - `posterior_network.ipynb <_static/notebooks/examples/unified_evidential_train/posterior_network.ipynb>`_ — Posterior Networks (Charpentier et al., 2020) using normalizing flows for density-based pseudo-counts without OOD training data
 - ``Natural_Posterior_Network.ipynb`` — Natural Posterior Networks (Charpentier et al., 2022) with radial flows, Dirichlet posteriors, and certainty budget
 - ``Information_Robust_Dirichlet_Networks.ipynb`` — IRD Networks (Tsiligkaridis, 2019) with Lp calibration, regularization, and adversarial entropy
