@@ -1,0 +1,17 @@
+probly.representation.credal\_set.array
+=======================================
+
+.. automodule:: probly.representation.credal_set.array
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ArrayCategoricalCredalSet
+      ArrayConvexCredalSet
+      ArrayDiscreteCredalSet
+      ArrayDistanceBasedCredalSet
+      ArrayProbabilityIntervals
+      ArraySingletonCredalSet
+   
