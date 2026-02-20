@@ -231,6 +231,9 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/index.html">Evaluation and Quantification</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Evaluation and Quantification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/plotting_credal_tutorial.html">Credal Sets Visualization Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/clustermargin_tutorial.html">A tutorial for clustervisualiser.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/dirichlet_tutorial.html">Dirichlet distribution tutorial</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/calibration_metrics.html">Calibration Metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/interpretation_techniques.html">Interpretation techniques</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/visualization_tools.html">Visualisation Tools</a></li>
@@ -364,7 +367,7 @@
 
 <div class="viewcode-block" id="plot_reliability_diagram">
 <a class="viewcode-back" href="../../../../api/probly.calibration.visualization.reliability_diagram.html#probly.calibration.visualization.reliability_diagram.plot_reliability_diagram">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">plot_reliability_diagram</span><span class="p">(</span><span class="n">diagram</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Model Calibration&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_reliability_diagram</span><span class="p">(</span><span class="n">diagram</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Model Calibration&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots the diagram calculated with `compute_reliability_diagram`.</span>
 
 <span class="sd">    Args:</span>

@@ -231,6 +231,9 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/index.html">Evaluation and Quantification</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Evaluation and Quantification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/plotting_credal_tutorial.html">Credal Sets Visualization Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/clustermargin_tutorial.html">A tutorial for clustervisualiser.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/dirichlet_tutorial.html">Dirichlet distribution tutorial</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/calibration_metrics.html">Calibration Metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/interpretation_techniques.html">Interpretation techniques</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/visualization_tools.html">Visualisation Tools</a></li>
@@ -737,8 +740,8 @@
         <span class="k">if</span> <span class="n">ax</span> <span class="o">==</span> <span class="n">new_sample_axis</span><span class="p">:</span>
             <span class="n">new_sample_axis</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">break</span>
-        <span class="k">if</span> <span class="n">ax</span> <span class="o">&lt;</span> <span class="n">new_sample_axis</span><span class="p">:</span>  <span class="c1"># type: ignore[operator]</span>
-            <span class="n">new_sample_axis</span> <span class="o">-=</span> <span class="mi">1</span>  <span class="c1"># type: ignore[operator]</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="o">&lt;</span> <span class="n">new_sample_axis</span><span class="p">:</span>
+            <span class="n">new_sample_axis</span> <span class="o">-=</span> <span class="mi">1</span>
 
     <span class="n">res</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">_implementation</span><span class="p">(</span><span class="n">a_array</span><span class="p">,</span> <span class="n">axes</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]  # noqa: SLF001</span>
 

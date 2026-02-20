@@ -231,6 +231,9 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../notebooks/examples/evaluation_and_quantification/index.html">Evaluation and Quantification</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Evaluation and Quantification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/examples/evaluation_and_quantification/plotting_credal_tutorial.html">Credal Sets Visualization Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/examples/evaluation_and_quantification/clustermargin_tutorial.html">A tutorial for clustervisualiser.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../notebooks/examples/evaluation_and_quantification/dirichlet_tutorial.html">Dirichlet distribution tutorial</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../notebooks/examples/evaluation_and_quantification/calibration_metrics.html">Calibration Metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../notebooks/examples/evaluation_and_quantification/interpretation_techniques.html">Interpretation techniques</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../notebooks/examples/evaluation_and_quantification/visualization_tools.html">Visualisation Tools</a></li>
@@ -346,7 +349,7 @@
 <span class="sd">        min_capacity: numpy.ndarray, shape (n_instances,), capacity of q given a</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">selected_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">a</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">selected_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">q</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">a</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># ty: ignore[invalid-argument-type]</span>
     <span class="n">min_capacity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">selected_sum</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">min_capacity</span></div>
 

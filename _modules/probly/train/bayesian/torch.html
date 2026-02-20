@@ -231,6 +231,9 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/index.html">Evaluation and Quantification</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Evaluation and Quantification</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/plotting_credal_tutorial.html">Credal Sets Visualization Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/clustermargin_tutorial.html">A tutorial for clustervisualiser.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/dirichlet_tutorial.html">Dirichlet distribution tutorial</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/calibration_metrics.html">Calibration Metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/interpretation_techniques.html">Interpretation techniques</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../notebooks/examples/evaluation_and_quantification/visualization_tools.html">Visualisation Tools</a></li>
@@ -322,7 +325,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">probly.traverse_nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn_compose</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pytraverse</span><span class="w"> </span><span class="kn">import</span> <span class="n">GlobalVariable</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">TraverserResult</span><span class="p">,</span> <span class="n">singledispatch_traverser</span><span class="p">,</span> <span class="n">traverse_with_state</span>
 
-<span class="n">KL_DIVERGENCE</span> <span class="o">=</span> <span class="n">GlobalVariable</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">](</span><span class="s2">&quot;KL_DIVERGENCE&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">KL_DIVERGENCE</span> <span class="o">=</span> <span class="n">GlobalVariable</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">](</span><span class="s2">&quot;KL_DIVERGENCE&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># ty: ignore[invalid-argument-type]</span>
 
 
 <span class="nd">@singledispatch_traverser</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span>
@@ -339,7 +342,11 @@
 <a class="viewcode-back" href="../../../../api/probly.train.bayesian.torch.html#probly.train.bayesian.torch.collect_kl_divergence">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">collect_kl_divergence</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Predictor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect the KL divergence of the Bayesian model by summing the KL divergence of each Bayesian layer.&quot;&quot;&quot;</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">traverse_with_state</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">nn_compose</span><span class="p">(</span><span class="n">kl_divergence_traverser</span><span class="p">))</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">traverse_with_state</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">nn_compose</span><span class="p">(</span><span class="n">kl_divergence_traverser</span><span class="p">),</span>
+        <span class="n">init</span><span class="o">=</span><span class="p">{</span><span class="n">KL_DIVERGENCE</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">state</span><span class="p">[</span><span class="n">KL_DIVERGENCE</span><span class="p">]</span></div>
 
 
